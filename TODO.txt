@@ -15,3 +15,5 @@ OVERVIEW:
 	monitorowanie live obiektow wczesniej zdefiniowanych
 	wyswietlanie trapow od agenta SNMP
 	get request dynamicznie w gridview i button clear na czyszczenie tabelki
+
+
