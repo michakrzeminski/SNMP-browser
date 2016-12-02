@@ -16,6 +16,7 @@ namespace SNMP_browser
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            SnmpClient client = new SnmpClient();
             Application.Run(new MainWindow());
         }
     }

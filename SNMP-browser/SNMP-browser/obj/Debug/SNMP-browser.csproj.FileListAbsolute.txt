@@ -8,3 +8,12 @@ C:\Users\Tomasz\Desktop\SNMP-browser-master\SNMP-browser\SNMP-browser\obj\Debug\
 C:\Users\Tomasz\Desktop\SNMP-browser-master\SNMP-browser\SNMP-browser\obj\Debug\SNMP-browser.csproj.GenerateResource.Cache
 C:\Users\Tomasz\Desktop\SNMP-browser-master\SNMP-browser\SNMP-browser\obj\Debug\SNMP-browser.exe
 C:\Users\Tomasz\Desktop\SNMP-browser-master\SNMP-browser\SNMP-browser\obj\Debug\SNMP-browser.pdb
+C:\ZST-project\SNMP-browser\SNMP-browser\obj\Debug\SNMP-browser.exe
+C:\ZST-project\SNMP-browser\SNMP-browser\obj\Debug\SNMP-browser.pdb
+C:\ZST-project\SNMP-browser\SNMP-browser\obj\Debug\SNMP-browser.csprojResolveAssemblyReference.cache
+C:\ZST-project\SNMP-browser\SNMP-browser\obj\Debug\SNMP_browser.MainWindow.resources
+C:\ZST-project\SNMP-browser\SNMP-browser\obj\Debug\SNMP_browser.Properties.Resources.resources
+C:\ZST-project\SNMP-browser\SNMP-browser\obj\Debug\SNMP-browser.csproj.GenerateResource.Cache
+C:\ZST-project\SNMP-browser\SNMP-browser\bin\Debug\SNMP-browser.exe
+C:\ZST-project\SNMP-browser\SNMP-browser\bin\Debug\SNMP-browser.pdb
+C:\ZST-project\SNMP-browser\SNMP-browser\bin\Debug\SnmpSharpNet.dll
