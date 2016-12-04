@@ -33,6 +33,7 @@ namespace SNMP_browser
             this.GetRequest("1.3.6.1.2.1.1.3.0");
             this.GetNextRequest("1.3.6.1.2.1.1.2.0");
             this.GetTable("1.3.6.1.2.1.2.2");
+            this.GetTree();
         }
         public void conn(String name)
         {
@@ -234,10 +235,63 @@ namespace SNMP_browser
             //TODO display in gridView
             Console.WriteLine("debug");
         }
-        public void GetSubTree(string OID)
+        public void GetTree()
         {
-            //TODO get all data for TreeView
-            // + dislpay
+            param.Version = SnmpVersion.Ver1;
+            Oid rootOid = new Oid("1.3.6.1.2.1");
+            Oid lastOid = (Oid)rootOid.Clone();
+            Pdu pdu = new Pdu(PduType.GetNext);
+            while (lastOid != null)
+            {
+                // When Pdu class is first constructed, RequestId is set to a random value
+                // that needs to be incremented on subsequent requests made using the
+                // same instance of the Pdu class.
+                if (pdu.RequestId != 0)
+                {
+                    pdu.RequestId += 1;
+                }
+                pdu.VbList.Clear();
+                pdu.VbList.Add(lastOid);
+                SnmpV1Packet result = (SnmpV1Packet)target.Request(pdu, param);
+
+                if (result != null)
+                {
+                    if (result.Pdu.ErrorStatus != 0)
+                    {
+                        Console.WriteLine("Error in SNMP reply. Error {0} index {1}",
+                            result.Pdu.ErrorStatus, result.Pdu.ErrorIndex);
+                        lastOid = null;
+                        break;
+                    }
+                    else
+                    {
+                        // Walk through returned variable bindings
+                        foreach (Vb v in result.Pdu.VbList)
+                        {
+                            // Check that retrieved Oid is "child" of the root OID
+                            if (rootOid.IsRootOf(v.Oid))
+                            {
+                                //TODO tutaj wyswietla pokolei wiersze, tu zamiast Console.write to wrzucic do treeView
+                                Console.WriteLine("{0} ({1}): {2}", v.Oid.ToString(),
+                                    SnmpConstants.GetTypeName(v.Value.Type),
+                                    v.Value.ToString());
+                                lastOid = v.Oid;
+                            }
+                            else
+                            {
+                                // we have reached the end of the requested
+                                // MIB tree. Set lastOid to null and exit loop
+                                lastOid = null;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No response received from SNMP agent.");
+                }
+            }
+            Console.WriteLine("debug");
         }
         public static string InstanceToString(uint[] instance)
         {
