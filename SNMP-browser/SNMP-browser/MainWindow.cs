@@ -111,7 +111,15 @@ namespace SNMP_browser
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-
+            if(this.comboBox1.Text == "GetRequest")
+            {
+                //TODO odpalic metode z snmp clienta getRequest
+                //SnmpClient.GetRequest(this.treeView1.SelectedNode.Text);
+            }
+            else if (this.comboBox1.Text == "GetNextRequest")
+            {
+                //TODO odpalic metode z snmp clienta getNextRequest
+            }
         }
     }
 }
