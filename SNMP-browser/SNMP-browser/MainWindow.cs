@@ -14,24 +14,51 @@ namespace SNMP_browser
     public partial class MainWindow : Form
     {
         SnmpClient snmp = new SnmpClient();
+        DataGridView grid = new DataGridView();
+       
+        
         public MainWindow()
         {
-            InitializeComponent();      
+            InitializeComponent();
+            dataGridView();
+
+        }
+
+        private void dataGridView()
+        {
+            var binding = new BindingSource();
+            tabPage1.Controls.Add(grid);
+            tabPage1.Refresh();
+            grid.Visible = true;
+            grid.Size = new System.Drawing.Size(450, 272);
+            grid.ColumnCount = 4;
+            grid.Columns[0].Name = "Name/OID";
+            grid.Columns[1].Name = "Value";
+            grid.Columns[2].Name = "Type";
+            grid.Columns[3].Name = "IP:Port";
+            grid.DataSource = binding.DataSource;
+            //addRows();
+
+            
+        }
+
+        private void addRows(string oid)
+        {
+                snmp.GetRequest(oid);
+                grid.Rows.Add(snmp.getOidNumber(), snmp.getValue(), snmp.getType(), snmp.getIpPort());
+        }
+        private void addRowsNext(string oid)
+        {
+            snmp.GetNextRequest(oid);
+            grid.Rows.Add(snmp.getOidNumber(), snmp.getValue(), snmp.getType(), snmp.getIpPort());
         }
 
         private void MainWindow_Load(object sender, EventArgs e)
         {
+            snmp.GetTree();
             treeView1.Nodes.Add("MIB Tree");
             treeView1.Nodes[0].Nodes.Add("iso.org.dod.internet.mgmt.mib-2");
             treeView1.Nodes[0].Nodes[0].Nodes.Add("system");
-            treeView1.Nodes[0].Nodes[0].Nodes[0].Nodes.Add("sysDescr");
-            treeView1.Nodes[0].Nodes[0].Nodes[0].Nodes.Add("sysObjectID");
-            treeView1.Nodes[0].Nodes[0].Nodes[0].Nodes.Add("sysUpTime");
-            treeView1.Nodes[0].Nodes[0].Nodes[0].Nodes.Add("sysContact");
-            treeView1.Nodes[0].Nodes[0].Nodes[0].Nodes.Add("sysName");
-            treeView1.Nodes[0].Nodes[0].Nodes[0].Nodes.Add("sysLocation");
-            treeView1.Nodes[0].Nodes[0].Nodes[0].Nodes.Add("sysServices");
-
             treeView1.Nodes[0].Nodes[0].Nodes.Add("interfaces");
             treeView1.Nodes[0].Nodes[0].Nodes.Add("at");
             treeView1.Nodes[0].Nodes[0].Nodes.Add("ip");
@@ -41,40 +68,35 @@ namespace SNMP_browser
             treeView1.Nodes[0].Nodes[0].Nodes.Add("egp");
             treeView1.Nodes[0].Nodes[0].Nodes.Add("snmp");
             treeView1.Nodes[0].Nodes[0].Nodes.Add("host");
+            foreach (var i in snmp.lista)
+            {
+                if (i.OidNumbers.Contains("1.3.6.1.2.1.1."))
+                    treeView1.Nodes[0].Nodes[0].Nodes[0].Nodes.Add(i.OidNumbers);
+                if (i.OidNumbers.Contains("1.3.6.1.2.1.2."))
+                    treeView1.Nodes[0].Nodes[0].Nodes[1].Nodes.Add(i.OidNumbers);
+                if (i.OidNumbers.Contains("1.3.6.1.2.1.3."))
+                    treeView1.Nodes[0].Nodes[0].Nodes[2].Nodes.Add(i.OidNumbers);
+                if (i.OidNumbers.Contains("1.3.6.1.2.1.4."))
+                    treeView1.Nodes[0].Nodes[0].Nodes[3].Nodes.Add(i.OidNumbers);
+                if (i.OidNumbers.Contains("1.3.6.1.2.1.5."))
+                    treeView1.Nodes[0].Nodes[0].Nodes[4].Nodes.Add(i.OidNumbers);
+                if (i.OidNumbers.Contains("1.3.6.1.2.1.6."))
+                    treeView1.Nodes[0].Nodes[0].Nodes[5].Nodes.Add(i.OidNumbers);
+                if (i.OidNumbers.Contains("1.3.6.1.2.1.7."))
+                    treeView1.Nodes[0].Nodes[0].Nodes[6].Nodes.Add(i.OidNumbers);
+                if (i.OidNumbers.Contains("1.3.6.1.2.1.8."))
+                    treeView1.Nodes[0].Nodes[0].Nodes[7].Nodes.Add(i.OidNumbers);
+                if (i.OidNumbers.Contains("1.3.6.1.2.1.10."))
+                    treeView1.Nodes[0].Nodes[0].Nodes[8].Nodes.Add(i.OidNumbers);
+                if (i.OidNumbers.Contains("1.3.6.1.2.1.11."))
+                    treeView1.Nodes[0].Nodes[0].Nodes[8].Nodes.Add(i.OidNumbers);
+                if (i.OidNumbers.Contains("1.3.6.1.2.1.25."))
+                    treeView1.Nodes[0].Nodes[0].Nodes[9].Nodes.Add(i.OidNumbers);
+
+            }
+                
         }
 
-        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
-        {
-                switch (treeView1.SelectedNode.Text)
-                {
-                    case "sysDescr":
-                        snmp.conn("sysDescr");
-                        break;
-                    case "sysObjectID":
-                        snmp.conn("sysObjectID");
-                        break;
-                    case "sysUpTime":
-                        snmp.conn("sysUpTime");
-                        break;
-                    case "sysContact":
-                        snmp.conn("sysContact");
-                        break;
-                    case "sysName":
-                        snmp.conn("sysName");
-                        break;
-                    case "sysLocation":
-                        snmp.conn("sysLocation");
-                        break;
-                    case "sysServices":
-                        snmp.conn("sysServices");
-                        break;
-                    default:
-                        snmp.conn("inny");
-                        break;
-
-                }
-
-        }
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -99,26 +121,41 @@ namespace SNMP_browser
 
         }
 
-        private void tabPage1_Click(object sender, EventArgs e)
-        {
 
-        }
 
-        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-
-        }
 
         private void button1_Click_1(object sender, EventArgs e)
         {
             if(this.comboBox1.Text == "GetRequest")
             {
                 //TODO odpalic metode z snmp clienta getRequest
-                //SnmpClient.GetRequest(this.treeView1.SelectedNode.Text);
+                snmp.GetRequest(treeView1.SelectedNode.Text);
+                addRows(treeView1.SelectedNode.Text);
             }
             else if (this.comboBox1.Text == "GetNextRequest")
             {
+                snmp.GetNextRequest(treeView1.SelectedNode.Text);
+                addRowsNext(treeView1.SelectedNode.Text);
                 //TODO odpalic metode z snmp clienta getNextRequest
+            }
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            grid.Rows.Clear();
+        }
+
+
+        private void treeView1_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (treeView1.SelectedNode.Nodes.Count == 0)
+            {
+                addRows(treeView1.SelectedNode.Text);
             }
         }
     }

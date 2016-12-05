@@ -9,33 +9,75 @@ using SnmpSharpNet;
 
 namespace SNMP_browser
 {
-    class SnmpClient 
+    class SnmpClient
     {
         // SNMP community name
-        OctetString community = new OctetString("community");
+        OctetString community = new OctetString("public");
         AgentParameters param;
         Pdu pdu;
         SnmpV1Packet result;
         SnmpV2Packet result2;
         UdpTarget target;
+        public List<Dane> lista = new List<Dane>();
+        public string address = "127.0.0.1";
+        public string OidNumber;
+        public string value;
+        public string type;
+        public string ipPort;
+
+
 
         public SnmpClient()
         {
-            // this.conn();
+            OidNumber = "";
+            value = "";
+            type = "";
+            ipPort = "";
             // Define agent parameters class
             param = new AgentParameters(community);
             // Set SNMP version to 1 (or 2)
             param.Version = SnmpVersion.Ver1;
 
-            IpAddress agent = new IpAddress("127.0.0.1");
+            IpAddress agent = new IpAddress(address);
             target = new UdpTarget((IPAddress)agent, 161, 2000, 2);
+            
 
-            this.GetRequest("1.3.6.1.2.1.1.3.0");
-            this.GetNextRequest("1.3.6.1.2.1.1.2.0");
-            this.GetTable("1.3.6.1.2.1.2.2");
-            this.GetTree();
+           // this.GetRequest("1.3.6.1.2.1.1.3.0");
+           // this.GetNextRequest("1.3.6.1.2.1.1.2.0");
+           // this.GetTable("1.3.6.1.2.1.2.2");
+           // this.GetTree();
         }
-        public void conn(String name)
+
+        public void Add(string _oidNumber, string _value, string _type, string _ipPort)
+        {
+            OidNumber = _oidNumber;
+            value = _value;
+            type = _type;
+            ipPort = _ipPort;
+        }
+
+
+        public string getOidNumber()
+        {
+            return OidNumber;
+        }
+
+        public string getValue()
+        {
+            return value;
+        }
+
+        public string getType()
+        {
+            return type;
+        }
+
+        public string getIpPort()
+        {
+            return ipPort;
+        }
+
+       /* public void conn(String name)
         {
             if (result != null)
             {
@@ -116,7 +158,7 @@ namespace SNMP_browser
                 Console.WriteLine("No response received from SNMP agent.");
             }
             target.Close();
-        }
+        }*/
         public SnmpV1Packet GetRequest(string OID)
         {
             this.param.Version = SnmpVersion.Ver1;
@@ -125,9 +167,13 @@ namespace SNMP_browser
             result = (SnmpV1Packet)target.Request(pdu, param);
 
             //TODO display in gridView
-            Console.WriteLine(result.Pdu.VbList[0].Oid.ToString());
-            Console.WriteLine(SnmpConstants.GetTypeName(result.Pdu.VbList[0].Value.Type));
-            Console.WriteLine(result.Pdu.VbList[0].Value.ToString());
+
+           OidNumber = result.Pdu.VbList[0].Oid.ToString();
+           type = SnmpConstants.GetTypeName(result.Pdu.VbList[0].Value.Type);
+           value = result.Pdu.VbList[0].Value.ToString();
+           ipPort = address + ":161";
+
+           // Console.WriteLine(OID);
             return result;
         }
         public SnmpV1Packet GetNextRequest(string OID)
@@ -138,9 +184,10 @@ namespace SNMP_browser
             result = (SnmpV1Packet)target.Request(pdu, param);
 
             //TODO display in gridView
-            Console.WriteLine(result.Pdu.VbList[0].Oid.ToString());
-            Console.WriteLine(SnmpConstants.GetTypeName(result.Pdu.VbList[0].Value.Type));
-            Console.WriteLine(result.Pdu.VbList[0].Value.ToString());
+            OidNumber = result.Pdu.VbList[0].Oid.ToString();
+            type = SnmpConstants.GetTypeName(result.Pdu.VbList[0].Value.Type);
+            value = result.Pdu.VbList[0].Value.ToString();
+            ipPort = address + ":161";
             return result;
         }
         public void GetTable(string OID)
@@ -272,10 +319,19 @@ namespace SNMP_browser
                             if (rootOid.IsRootOf(v.Oid))
                             {
                                 //TODO tutaj wyswietla pokolei wiersze, tu zamiast Console.write to wrzucic do treeView
-                                Console.WriteLine("{0} ({1}): {2}", v.Oid.ToString(),
-                                    SnmpConstants.GetTypeName(v.Value.Type),
-                                    v.Value.ToString());
+
+                                
+                                OidNumber = v.Oid.ToString();
+
+                              //  Console.WriteLine(OidNumber);
+                               // type = SnmpConstants.GetTypeName(v.Value.Type);
+                               // value = v.Value.ToString();
+                               // ipPort = address+":161" ;
+                                lista.Add(new Dane{ OidNumbers = v.Oid.ToString() });
                                 lastOid = v.Oid;
+                                
+                                
+                                
                             }
                             else
                             {
@@ -290,6 +346,12 @@ namespace SNMP_browser
                 {
                     Console.WriteLine("No response received from SNMP agent.");
                 }
+            }
+            foreach (var i in lista)
+            {
+                if (OidNumber.Contains("1.3.6.1.2.1.55"))
+                    break;
+                Console.WriteLine(i.OidNumbers);
             }
             Console.WriteLine("debug");
         }
@@ -306,4 +368,9 @@ namespace SNMP_browser
             return str.ToString();
         }
     }
+}
+
+public class Dane
+{
+    public string OidNumbers;
 }
