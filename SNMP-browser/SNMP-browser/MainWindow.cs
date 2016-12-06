@@ -11,14 +11,15 @@ using System.Windows.Forms;
 namespace SNMP_browser
 {
 
-    public partial class MainWindow : Form
+    partial class MainWindow : Form
     {
-        SnmpClient snmp = new SnmpClient();
+        SnmpClient snmp;
         DataGridView grid = new DataGridView();
-       
-        
-        public MainWindow()
+
+
+        public MainWindow(SnmpClient client)
         {
+            this.snmp = client;
             InitializeComponent();
             dataGridView();
 
@@ -37,9 +38,7 @@ namespace SNMP_browser
             grid.Columns[2].Name = "Type";
             grid.Columns[3].Name = "IP:Port";
             grid.DataSource = binding.DataSource;
-            //addRows();
-
-            
+            //addRows();    
         }
 
         private void addRows(string oid)
@@ -70,39 +69,35 @@ namespace SNMP_browser
             treeView1.Nodes[0].Nodes[0].Nodes.Add("host");
             foreach (var i in snmp.lista)
             {
-                if (i.OidNumbers.Contains("1.3.6.1.2.1.1."))
-                    treeView1.Nodes[0].Nodes[0].Nodes[0].Nodes.Add(i.OidNumbers);
-                if (i.OidNumbers.Contains("1.3.6.1.2.1.2."))
-                    treeView1.Nodes[0].Nodes[0].Nodes[1].Nodes.Add(i.OidNumbers);
-                if (i.OidNumbers.Contains("1.3.6.1.2.1.3."))
-                    treeView1.Nodes[0].Nodes[0].Nodes[2].Nodes.Add(i.OidNumbers);
-                if (i.OidNumbers.Contains("1.3.6.1.2.1.4."))
-                    treeView1.Nodes[0].Nodes[0].Nodes[3].Nodes.Add(i.OidNumbers);
-                if (i.OidNumbers.Contains("1.3.6.1.2.1.5."))
-                    treeView1.Nodes[0].Nodes[0].Nodes[4].Nodes.Add(i.OidNumbers);
-                if (i.OidNumbers.Contains("1.3.6.1.2.1.6."))
-                    treeView1.Nodes[0].Nodes[0].Nodes[5].Nodes.Add(i.OidNumbers);
-                if (i.OidNumbers.Contains("1.3.6.1.2.1.7."))
-                    treeView1.Nodes[0].Nodes[0].Nodes[6].Nodes.Add(i.OidNumbers);
-                if (i.OidNumbers.Contains("1.3.6.1.2.1.8."))
-                    treeView1.Nodes[0].Nodes[0].Nodes[7].Nodes.Add(i.OidNumbers);
-                if (i.OidNumbers.Contains("1.3.6.1.2.1.10."))
-                    treeView1.Nodes[0].Nodes[0].Nodes[8].Nodes.Add(i.OidNumbers);
-                if (i.OidNumbers.Contains("1.3.6.1.2.1.11."))
-                    treeView1.Nodes[0].Nodes[0].Nodes[8].Nodes.Add(i.OidNumbers);
-                if (i.OidNumbers.Contains("1.3.6.1.2.1.25."))
-                    treeView1.Nodes[0].Nodes[0].Nodes[9].Nodes.Add(i.OidNumbers);
+                if (i.Oid.Contains("1.3.6.1.2.1.1."))
+                    treeView1.Nodes[0].Nodes[0].Nodes[0].Nodes.Add(i.name);
+                if (i.Oid.Contains("1.3.6.1.2.1.2."))
+                    treeView1.Nodes[0].Nodes[0].Nodes[1].Nodes.Add(i.name);
+                if (i.Oid.Contains("1.3.6.1.2.1.3."))
+                    treeView1.Nodes[0].Nodes[0].Nodes[2].Nodes.Add(i.name);
+                if (i.Oid.Contains("1.3.6.1.2.1.4."))
+                    treeView1.Nodes[0].Nodes[0].Nodes[3].Nodes.Add(i.name);
+                if (i.Oid.Contains("1.3.6.1.2.1.5."))
+                    treeView1.Nodes[0].Nodes[0].Nodes[4].Nodes.Add(i.name);
+                if (i.Oid.Contains("1.3.6.1.2.1.6."))
+                    treeView1.Nodes[0].Nodes[0].Nodes[5].Nodes.Add(i.name);
+                if (i.Oid.Contains("1.3.6.1.2.1.7."))
+                    treeView1.Nodes[0].Nodes[0].Nodes[6].Nodes.Add(i.name);
+                if (i.Oid.Contains("1.3.6.1.2.1.8."))
+                    treeView1.Nodes[0].Nodes[0].Nodes[7].Nodes.Add(i.name);
+                if (i.Oid.Contains("1.3.6.1.2.1.10."))
+                    treeView1.Nodes[0].Nodes[0].Nodes[8].Nodes.Add(i.name);
+                if (i.Oid.Contains("1.3.6.1.2.1.11."))
+                    treeView1.Nodes[0].Nodes[0].Nodes[8].Nodes.Add(i.name);
+                if (i.Oid.Contains("1.3.6.1.2.1.25."))
+                    treeView1.Nodes[0].Nodes[0].Nodes[9].Nodes.Add(i.name);
 
             }
                 
         }
 
-
         private void button1_Click(object sender, EventArgs e)
         {
-
-            
-            
 
         }
 
@@ -121,22 +116,22 @@ namespace SNMP_browser
 
         }
 
-
-
-
         private void button1_Click_1(object sender, EventArgs e)
         {
+            string oid = snmp.translate(null, treeView1.SelectedNode.Text);
             if(this.comboBox1.Text == "GetRequest")
             {
-                //TODO odpalic metode z snmp clienta getRequest
-                snmp.GetRequest(treeView1.SelectedNode.Text);
-                addRows(treeView1.SelectedNode.Text);
+                snmp.GetRequest(oid+".0");
+                addRows(oid + ".0");
             }
             else if (this.comboBox1.Text == "GetNextRequest")
             {
-                snmp.GetNextRequest(treeView1.SelectedNode.Text);
-                addRowsNext(treeView1.SelectedNode.Text);
-                //TODO odpalic metode z snmp clienta getNextRequest
+                snmp.GetNextRequest(oid + ".0");
+                addRowsNext(oid + ".0");
+            }
+            else if (this.comboBox1.Text == "GetTable")
+            {
+                //TODO
             }
         }
 
@@ -149,7 +144,6 @@ namespace SNMP_browser
         {
             grid.Rows.Clear();
         }
-
 
         private void treeView1_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {

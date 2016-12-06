@@ -1,19 +1,14 @@
 TODO:
 Micha³:
--stworzenie projektu + za³aczenie SnmpSharpNet
+-dodanie nazw do treeView
 Patryk:
--Próba podlaczenia sie do socketow SNMP udp161 i udp162 i jakakolwiek komunikacja
+-trapy i monitorowane obiekty
 Tomek:
--stworzenie szkieletu aplikacji okienkowej w designerze
+-getTable
 
-OVERVIEW:
--projekt w C#
--Przykladowa biblioteka SnmpSharpNet
--Aplikacja okienkowa:
-	(TreeView) drzewko jak w MIB Browserze
-	(combobox) do wyboru operacji jaka chcemy wykonac (GetRequest,GetNextRequest)
-	monitorowanie live obiektow wczesniej zdefiniowanych
-	wyswietlanie trapow od agenta SNMP
-	get request dynamicznie w gridview i button clear na czyszczenie tabelki
+- wrzuca do drzewa tylko te ktore maja w pliku swoje nazwy
+- opuszcza pare tabel niestety tj. tcpConnTable, ipRouteTable, ipNetToMediaTable
+- nie robic translate'a dla wpisanego OID'a recznie w okienku po lewej
+- getTable tylko dla oidow oznaczajacych tabele
 
 

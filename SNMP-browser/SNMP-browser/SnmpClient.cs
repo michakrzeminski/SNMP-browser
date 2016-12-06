@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,10 +10,10 @@ using SnmpSharpNet;
 
 namespace SNMP_browser
 {
-    class SnmpClient
+    public class SnmpClient
     {
         // SNMP community name
-        OctetString community = new OctetString("public");
+        OctetString community = new OctetString("community");
         AgentParameters param;
         Pdu pdu;
         SnmpV1Packet result;
@@ -24,8 +25,7 @@ namespace SNMP_browser
         public string value;
         public string type;
         public string ipPort;
-
-
+        private Dictionary<string, string> translation;
 
         public SnmpClient()
         {
@@ -40,12 +40,9 @@ namespace SNMP_browser
 
             IpAddress agent = new IpAddress(address);
             target = new UdpTarget((IPAddress)agent, 161, 2000, 2);
-            
 
-           // this.GetRequest("1.3.6.1.2.1.1.3.0");
-           // this.GetNextRequest("1.3.6.1.2.1.1.2.0");
-           // this.GetTable("1.3.6.1.2.1.2.2");
-           // this.GetTree();
+            translation = new Dictionary<string, string>();
+            this.readTranslationFile();
         }
 
         public void Add(string _oidNumber, string _value, string _type, string _ipPort)
@@ -76,89 +73,32 @@ namespace SNMP_browser
         {
             return ipPort;
         }
-
-       /* public void conn(String name)
+        
+        public void readTranslationFile()
         {
-            if (result != null)
+            string path = AppDomain.CurrentDomain.BaseDirectory;
+            //remove \bin\Debug from path
+            path = path.Remove(path.IndexOf("bin"), 10);
+            path += "translation.txt";
+            try
             {
-                if (result.Pdu.ErrorStatus != 0)
+                using (StreamReader sr = new StreamReader(path))
                 {
-                    Console.WriteLine("Error in SNMP reply. Error {0} index {1}", result.Pdu.ErrorStatus, result.Pdu.ErrorIndex);
-                }
-                else
-                {
-                    switch(name)
+                    String line;
+                    while ((line = sr.ReadLine()) != null)
                     {
-                        case "sysDescr":
-                            {
-                                Console.WriteLine("sysDescr:");
-                                Console.WriteLine(result.Pdu.VbList[0].Oid.ToString());
-                                Console.WriteLine(SnmpConstants.GetTypeName(result.Pdu.VbList[0].Value.Type));
-                                Console.WriteLine(result.Pdu.VbList[0].Value.ToString());
-                                break;
-                            }
-                        case "sysObjectID":
-                            {
-
-                                Console.WriteLine("sysObjectID:");
-                                Console.WriteLine(result.Pdu.VbList[1].Oid.ToString());
-                                Console.WriteLine(SnmpConstants.GetTypeName(result.Pdu.VbList[1].Value.Type));
-                                Console.WriteLine(result.Pdu.VbList[1].Value.ToString());
-                                break;
-                            }
-                        case "sysUpTime":
-                            {
-                                Console.WriteLine("sysupTime:");
-                                Console.WriteLine(result.Pdu.VbList[2].Oid.ToString());
-                                Console.WriteLine(SnmpConstants.GetTypeName(result.Pdu.VbList[2].Value.Type));
-                                Console.WriteLine(result.Pdu.VbList[2].Value.ToString());
-                                break;
-                            }
-                        case "sysContact":
-                            {
-                                Console.WriteLine("sysContact:");
-                                Console.WriteLine(result.Pdu.VbList[3].Oid.ToString());
-                                Console.WriteLine(SnmpConstants.GetTypeName(result.Pdu.VbList[3].Value.Type));
-                                Console.WriteLine(result.Pdu.VbList[3].Value.ToString());
-                                break;
-                            }
-
-                        case "sysName":
-                            {
-                                Console.WriteLine("sysName:");
-                                Console.WriteLine(result.Pdu.VbList[4].Oid.ToString());
-                                Console.WriteLine(SnmpConstants.GetTypeName(result.Pdu.VbList[4].Value.Type));
-                                Console.WriteLine(result.Pdu.VbList[4].Value.ToString());
-                                break;
-                            }
-                        case "sysLocation":
-                            {
-                                Console.WriteLine("sysLocation:");
-                                Console.WriteLine(result.Pdu.VbList[5].Oid.ToString());
-                                Console.WriteLine(SnmpConstants.GetTypeName(result.Pdu.VbList[5].Value.Type));
-                                Console.WriteLine(result.Pdu.VbList[5].Value.ToString());
-                                break;
-                            }
-                        case "sysServices":
-                            {
-                                Console.WriteLine("sysServices:");
-                                Console.WriteLine(result.Pdu.VbList[6].Oid.ToString());
-                                Console.WriteLine(SnmpConstants.GetTypeName(result.Pdu.VbList[6].Value.Type));
-                                Console.WriteLine(result.Pdu.VbList[6].Value.ToString());
-                                break;
-                            }
-                    default:
-                        Console.WriteLine("inny");
-                            break;
+                        string[] temp = line.Split(null);
+                        translation.Add(temp[0], temp[1]);
                     }
                 }
             }
-            else
+            catch (Exception e)
             {
-                Console.WriteLine("No response received from SNMP agent.");
+                Console.WriteLine("The file could not be read:");
+                Console.WriteLine(e.Message);
             }
-            target.Close();
-        }*/
+        }
+
         public SnmpV1Packet GetRequest(string OID)
         {
             this.param.Version = SnmpVersion.Ver1;
@@ -284,15 +224,13 @@ namespace SNMP_browser
         }
         public void GetTree()
         {
+            int counter = 0;
             param.Version = SnmpVersion.Ver1;
             Oid rootOid = new Oid("1.3.6.1.2.1");
             Oid lastOid = (Oid)rootOid.Clone();
             Pdu pdu = new Pdu(PduType.GetNext);
             while (lastOid != null)
             {
-                // When Pdu class is first constructed, RequestId is set to a random value
-                // that needs to be incremented on subsequent requests made using the
-                // same instance of the Pdu class.
                 if (pdu.RequestId != 0)
                 {
                     pdu.RequestId += 1;
@@ -318,16 +256,33 @@ namespace SNMP_browser
                             // Check that retrieved Oid is "child" of the root OID
                             if (rootOid.IsRootOf(v.Oid))
                             {
-                                //TODO tutaj wyswietla pokolei wiersze, tu zamiast Console.write to wrzucic do treeView
-
-                                
                                 OidNumber = v.Oid.ToString();
+                                string temp = OidNumber.Substring(OidNumber.Length - 2);
+                                if(temp == ".0")
+                                {
+                                    counter = 0;
+                                    string name = translate(OidNumber.Remove(OidNumber.Length - 2), null);
+                                    if (name != null)
+                                    {
+                                        lista.Add(new Dane(v.Oid.ToString(), name));
+                                    }
+                                }
+                                else
+                                {
+                                    if (translate(lastOid.ToString().Remove(lastOid.ToString().Length - 2), null) != null && counter == 0)
+                                    {
+                                        int length = lastOid.ToString().Length - 2;
+                                        string oid = OidNumber.Substring(0, length);
+                                        string name = translate(oid, null);
+                                        if (name != null)
+                                        {
+                                            lista.Add(new Dane(oid, name));
+                                            counter++;
+                                        }
+                                    }
+                                }
 
-                              //  Console.WriteLine(OidNumber);
-                               // type = SnmpConstants.GetTypeName(v.Value.Type);
-                               // value = v.Value.ToString();
-                               // ipPort = address+":161" ;
-                                lista.Add(new Dane{ OidNumbers = v.Oid.ToString() });
+                                //lista.Add(new Dane{ OidNumbers = v.Oid.ToString() });
                                 lastOid = v.Oid;
                                 
                                 
@@ -351,7 +306,6 @@ namespace SNMP_browser
             {
                 if (OidNumber.Contains("1.3.6.1.2.1.55"))
                     break;
-                Console.WriteLine(i.OidNumbers);
             }
             Console.WriteLine("debug");
         }
@@ -367,10 +321,32 @@ namespace SNMP_browser
             }
             return str.ToString();
         }
+        public string translate(string OID, string name)
+        {
+            if(OID != null)
+            {
+                KeyValuePair<string,string> temp = translation.FirstOrDefault(t => t.Value == OID);
+                if(temp.Key != null)
+                    return temp.Key;
+            }
+            if(name != null)
+            {
+                KeyValuePair<string, string> temp = translation.FirstOrDefault(t => t.Key == name);
+                if (temp.Value != null)
+                    return temp.Value;
+            }
+            return null;
+        }
     }
 }
 
 public class Dane
 {
-    public string OidNumbers;
+    public string Oid;
+    public string name;
+    public Dane(string Oid, string name)
+    {
+        this.Oid = Oid;
+        this.name = name;
+    }
 }
