@@ -38,7 +38,8 @@
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.button2 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
             this.TabControl.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -65,7 +66,8 @@
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Items.AddRange(new object[] {
             "GetRequest",
-            "GetNextRequest"});
+            "GetNextRequest",
+            "GetTable"});
             this.comboBox1.Location = new System.Drawing.Point(368, 12);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 21);
@@ -87,6 +89,7 @@
             this.TabControl.Controls.Add(this.tabPage1);
             this.TabControl.Controls.Add(this.tabPage2);
             this.TabControl.Controls.Add(this.tabPage3);
+            this.TabControl.Controls.Add(this.tabPage4);
             this.TabControl.Location = new System.Drawing.Point(12, 41);
             this.TabControl.Name = "TabControl";
             this.TabControl.SelectedIndex = 0;
@@ -100,7 +103,7 @@
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage1.Size = new System.Drawing.Size(450, 272);
             this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "ShowTable";
+            this.tabPage1.Text = "ResultTable";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // tabPage2
@@ -142,19 +145,31 @@
             this.label2.TabIndex = 6;
             this.label2.Text = "Address:";
             // 
-            // textBox1
+            // comboBox2
             // 
-            this.textBox1.Location = new System.Drawing.Point(67, 15);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 20);
-            this.textBox1.TabIndex = 7;
+            this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.Location = new System.Drawing.Point(67, 14);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(121, 21);
+            this.comboBox2.TabIndex = 7;
+            this.comboBox2.Text = "127.0.0.1";
+            // 
+            // tabPage4
+            // 
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage4.Size = new System.Drawing.Size(450, 272);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "ShowTable";
+            this.tabPage4.UseVisualStyleBackColor = true;
             // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(695, 377);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.comboBox2);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.TabControl);
@@ -180,10 +195,11 @@
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.TabControl TabControl;
         private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.TabPage tabPage4;
 
     }
 }

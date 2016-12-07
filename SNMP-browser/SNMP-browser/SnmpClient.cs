@@ -13,13 +13,15 @@ namespace SNMP_browser
     public class SnmpClient
     {
         // SNMP community name
-        OctetString community = new OctetString("community");
+        OctetString community = new OctetString("public");
         AgentParameters param;
         Pdu pdu;
         SnmpV1Packet result;
         SnmpV2Packet result2;
         UdpTarget target;
         public List<Dane> lista = new List<Dane>();
+        public List<uint> tableColumns = new List<uint>();
+        public Dictionary<String, Dictionary<uint, AsnType>> results = new Dictionary<String, Dictionary<uint, AsnType>>();
         public string address = "127.0.0.1";
         public string OidNumber;
         public string value;
@@ -134,11 +136,12 @@ namespace SNMP_browser
         {
             //TODO pobiera dane dla calej tabeli, trzeba to wyswietlic
             this.param.Version = SnmpVersion.Ver2;
-            Dictionary<String, Dictionary<uint, AsnType>> result = new Dictionary<String, Dictionary<uint, AsnType>>();
+            
             // Not every row has a value for every column so keep track of all columns available in the table
-            List<uint> tableColumns = new List<uint>();
+            
             Oid startOid = new Oid(OID);
             startOid.Add(1);
+            Console.WriteLine(startOid);
             Pdu bulkPdu = Pdu.GetBulkPdu();
             bulkPdu.VbList.Add(startOid);
             bulkPdu.NonRepeaters = 0;
@@ -194,14 +197,16 @@ namespace SNMP_browser
                         uint column = childOids[0];
                         if (!tableColumns.Contains(column))
                             tableColumns.Add(column);
-                        if (result.ContainsKey(strInst))
+                        if (results.ContainsKey(strInst))
                         {
-                            result[strInst][column] = (AsnType)v.Value.Clone();
+                            results[strInst][column] = (AsnType)v.Value.Clone();
                         }
                         else
                         {
-                            result[strInst] = new Dictionary<uint, AsnType>();
-                            result[strInst][column] = (AsnType)v.Value.Clone();
+                            results[strInst] = new Dictionary<uint, AsnType>();
+                            
+                            results[strInst][column] = (AsnType)v.Value.Clone();
+                            //Console.WriteLine(result[strInst][column]);
                         }
                     }
                     else

@@ -17,6 +17,7 @@ namespace SNMP_browser
         DataGridView grid = new DataGridView();
 
 
+
         public MainWindow(SnmpClient client)
         {
             this.snmp = client;
@@ -131,8 +132,43 @@ namespace SNMP_browser
             }
             else if (this.comboBox1.Text == "GetTable")
             {
-                //TODO
+                foreach (var i in snmp.lista)
+                    {
+                        if (treeView1.SelectedNode.Text == i.name && i.name.Contains("Table"))
+                        {
+                            tabPage4.Controls.Clear();
+                            DataGridView table = new DataGridView();
+                            table.Columns.Clear();
+                            table.Rows.Clear();
+                            snmp.tableColumns.Clear();
+                            snmp.results.Clear();
+                            tabPage4.Refresh();
+                            tabPage4.Controls.Add(table);
+                            table.Size = new System.Drawing.Size(450, 272);
+                            snmp.GetTable(i.Oid);
+                            table.ColumnCount = snmp.tableColumns.Count;
+                            for (int j = 1; j <= table.ColumnCount; j++)
+                            {
+                                table.Columns[j-1].Name = i.Oid+".1."+j;
+                            }
+                            
+                            foreach ( String key in snmp.results.Keys)
+                            {
+
+                                var index = table.Rows.Add();
+                                for (uint j = 0; j < table.ColumnCount; j++)
+                                {
+                                        int mm = (int)j;
+                                        table.Rows[index].Cells[mm].Value = snmp.results[key][j+1].ToString();
+                                }
+                            }
+                            tabPage4.Refresh();
+                            table.Visible = true;
+                        }
+                    }
             }
+            Console.WriteLine("koniec");
+
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -149,8 +185,21 @@ namespace SNMP_browser
         {
             if (treeView1.SelectedNode.Nodes.Count == 0)
             {
-                addRows(treeView1.SelectedNode.Text);
+                if (treeView1.SelectedNode.Text.Contains("Table"))
+                {
+                }
+                 else
+                 {
+                        string NodeName = treeView1.SelectedNode.Text;
+                        foreach (var i in snmp.lista)
+                        {
+                            if (i.name == NodeName)
+                                addRows(i.Oid);
+                        }
+                 }
             }
+           
         }
+
     }
 }
