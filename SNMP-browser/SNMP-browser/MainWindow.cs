@@ -15,6 +15,7 @@ namespace SNMP_browser
     {
         SnmpClient snmp;
         DataGridView grid = new DataGridView();
+        DataGridView grid2 = new DataGridView();
 
 
 
@@ -40,6 +41,12 @@ namespace SNMP_browser
             grid.Columns[3].Name = "IP:Port";
             grid.DataSource = binding.DataSource;
             //addRows();    
+        }
+
+        private void trapGridView()
+        {
+            tabPage2.Controls.Add(grid2);
+
         }
 
         private void addRows(string oid)
