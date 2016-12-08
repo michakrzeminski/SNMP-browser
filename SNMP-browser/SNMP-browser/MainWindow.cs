@@ -24,6 +24,7 @@ namespace SNMP_browser
             this.snmp = client;
             InitializeComponent();
             dataGridView();
+            trapGridView();
 
         }
 
@@ -45,8 +46,17 @@ namespace SNMP_browser
 
         private void trapGridView()
         {
-            tabPage2.Controls.Add(grid2);
-
+            var binding = new BindingSource();
+            splitContainer1.Panel1.Controls.Add(grid2);
+            splitContainer1.Refresh();
+            grid2.Visible = true;
+            grid2.Size = new System.Drawing.Size(splitContainer1.Panel1.Width, splitContainer1.Panel1.Height);
+            grid2.ColumnCount = 4;
+            grid2.Columns[0].Name = "Description";
+            grid2.Columns[1].Name = "Source";
+            grid2.Columns[2].Name = "Time";
+            grid2.Columns[3].Name = "Severity";
+            grid2.DataSource = binding.DataSource;
         }
 
         private void addRows(string oid)
@@ -231,7 +241,9 @@ namespace SNMP_browser
 
         }
 
+        private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
+        {
 
-
+        }
     }
 }
