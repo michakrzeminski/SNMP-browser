@@ -119,16 +119,23 @@ namespace SNMP_browser
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            string oid = snmp.translate(null, treeView1.SelectedNode.Text);
+            //string oid = snmp.translate(null, treeView1.SelectedNode.Text);
+            string oid = textBox1.Text;
             if(this.comboBox1.Text == "GetRequest")
             {
-                snmp.GetRequest(oid+".0");
-                addRows(oid + ".0");
+                snmp.GetRequest(oid);
+                if(snmp.getValue()=="Null")
+                    MessageBox.Show("No such name error (127.0.0.1)");
+                else
+                addRows(oid );
+                
             }
             else if (this.comboBox1.Text == "GetNextRequest")
             {
-                snmp.GetNextRequest(oid + ".0");
-                addRowsNext(oid + ".0");
+                snmp.GetNextRequest(oid );
+                addRowsNext(oid );
+                textBox1.Text = snmp.getOidNumber();
+
             }
             else if (this.comboBox1.Text == "GetTable")
             {
@@ -200,6 +207,24 @@ namespace SNMP_browser
             }
            
         }
+
+        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            
+            string oid = snmp.translate(null, treeView1.SelectedNode.Text);
+
+            if (treeView1.SelectedNode.Nodes.Count == 0)
+            {
+                snmp.GetRequest(oid + ".0");
+                textBox1.Text = snmp.getOidNumber();
+            }
+            else
+                textBox1.Text = oid ;
+
+
+        }
+
+
 
     }
 }
