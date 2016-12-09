@@ -11,21 +11,22 @@ using System.Windows.Forms;
 namespace SNMP_browser
 {
 
-    partial class MainWindow : Form
+    public partial class MainWindow : Form
     {
-        SnmpClient snmp;
-        DataGridView grid = new DataGridView();
-        DataGridView grid2 = new DataGridView();
+        SnmpClient snmpClient;
+       // DataGridView grid = new DataGridView();
+       // DataGridView grid2 = new DataGridView();
+        
 
 
 
-        public MainWindow(SnmpClient client)
+        public MainWindow()
         {
-            this.snmp = client;
+            this.snmpClient = new SnmpClient(this);
             InitializeComponent();
             dataGridView();
             trapGridView();
-
+            
         }
 
         private void dataGridView()
@@ -57,22 +58,44 @@ namespace SNMP_browser
             grid2.Columns[2].Name = "Time";
             grid2.Columns[3].Name = "Severity";
             grid2.DataSource = binding.DataSource;
+            grid2.SelectionChanged += grid2_SelectionChanged;
+        }
+
+        
+
+        delegate void addTrapCallback(string description, string source, string time, string severity);
+
+        public void addTrap(string description, string source, string time, string severity)
+        {
+            //narazie na sztywno ruleName na nic, potem nazwa parametru po czym monituroujemy jak w trap receiver w 
+            //mib browserze
+            if (this.grid2.InvokeRequired)
+            {
+                addTrapCallback d = new addTrapCallback(addTrap);
+                this.Invoke(d, new object[] { description, source, time, severity });
+            }
+            else
+            {
+                grid2.Rows.Add(description, source, time, severity);
+            }
+
+            
         }
 
         private void addRows(string oid)
         {
-                snmp.GetRequest(oid);
-                grid.Rows.Add(snmp.getOidNumber(), snmp.getValue(), snmp.getType(), snmp.getIpPort());
+                snmpClient.GetRequest(oid);
+                grid.Rows.Add(snmpClient.getOidNumber(), snmpClient.getValue(), snmpClient.getType(), snmpClient.getIpPort());
         }
         private void addRowsNext(string oid)
         {
-            snmp.GetNextRequest(oid);
-            grid.Rows.Add(snmp.getOidNumber(), snmp.getValue(), snmp.getType(), snmp.getIpPort());
+            snmpClient.GetNextRequest(oid);
+            grid.Rows.Add(snmpClient.getOidNumber(), snmpClient.getValue(), snmpClient.getType(), snmpClient.getIpPort());
         }
 
         private void MainWindow_Load(object sender, EventArgs e)
         {
-            snmp.GetTree();
+            snmpClient.GetTree();
             treeView1.Nodes.Add("MIB Tree");
             treeView1.Nodes[0].Nodes.Add("iso.org.dod.internet.mgmt.mib-2");
             treeView1.Nodes[0].Nodes[0].Nodes.Add("system");
@@ -85,7 +108,7 @@ namespace SNMP_browser
             treeView1.Nodes[0].Nodes[0].Nodes.Add("egp");
             treeView1.Nodes[0].Nodes[0].Nodes.Add("snmp");
             treeView1.Nodes[0].Nodes[0].Nodes.Add("host");
-            foreach (var i in snmp.lista)
+            foreach (var i in snmpClient.lista)
             {
                 if (i.Oid.Contains("1.3.6.1.2.1.1."))
                     treeView1.Nodes[0].Nodes[0].Nodes[0].Nodes.Add(i.name);
@@ -140,8 +163,8 @@ namespace SNMP_browser
             string oid = textBox1.Text;
             if(this.comboBox1.Text == "GetRequest")
             {
-                snmp.GetRequest(oid);
-                if(snmp.getValue()=="Null")
+                snmpClient.GetRequest(oid);
+                if(snmpClient.getValue()=="Null")
                     MessageBox.Show("No such name error (127.0.0.1)");
                 else
                 addRows(oid );
@@ -149,14 +172,14 @@ namespace SNMP_browser
             }
             else if (this.comboBox1.Text == "GetNextRequest")
             {
-                snmp.GetNextRequest(oid );
+                snmpClient.GetNextRequest(oid );
                 addRowsNext(oid );
-                textBox1.Text = snmp.getOidNumber();
+                textBox1.Text = snmpClient.getOidNumber();
 
             }
             else if (this.comboBox1.Text == "GetTable")
             {
-                foreach (var i in snmp.lista)
+                foreach (var i in snmpClient.lista)
                     {
                         if (treeView1.SelectedNode.Text == i.name && i.name.Contains("Table"))
                         {
@@ -164,26 +187,26 @@ namespace SNMP_browser
                             DataGridView table = new DataGridView();
                             table.Columns.Clear();
                             table.Rows.Clear();
-                            snmp.tableColumns.Clear();
-                            snmp.results.Clear();
+                            snmpClient.tableColumns.Clear();
+                            snmpClient.results.Clear();
                             tabPage4.Refresh();
                             tabPage4.Controls.Add(table);
                             table.Size = new System.Drawing.Size(450, 272);
-                            snmp.GetTable(i.Oid);
-                            table.ColumnCount = snmp.tableColumns.Count;
+                            snmpClient.GetTable(i.Oid);
+                            table.ColumnCount = snmpClient.tableColumns.Count;
                             for (int j = 1; j <= table.ColumnCount; j++)
                             {
                                 table.Columns[j-1].Name = i.Oid+".1."+j;
                             }
                             
-                            foreach ( String key in snmp.results.Keys)
+                            foreach ( String key in snmpClient.results.Keys)
                             {
 
                                 var index = table.Rows.Add();
                                 for (uint j = 0; j < table.ColumnCount; j++)
                                 {
                                         int mm = (int)j;
-                                        table.Rows[index].Cells[mm].Value = snmp.results[key][j+1].ToString();
+                                        table.Rows[index].Cells[mm].Value = snmpClient.results[key][j+1].ToString();
                                 }
                             }
                             tabPage4.Refresh();
@@ -195,6 +218,21 @@ namespace SNMP_browser
 
         }
 
+        private void grid2_SelectionChanged(object sender, EventArgs e)
+        {
+            richTextBox1.Clear();
+            if (grid2.CurrentCell.RowIndex != (grid2.RowCount - 1))
+            {
+                List<VarBind> varBindListTmp = snmpClient.varBindListPerTrap[grid2.CurrentCell.RowIndex];
+                richTextBox1.AppendText(String.Format("Variable Bindings:{0}", Environment.NewLine));
+                foreach (VarBind v in varBindListTmp)
+                {
+                    richTextBox1.AppendText(String.Format("{0}  {1}  {2}{3}", v.OID, v.type, v.value, Environment.NewLine));
+
+                }
+            }
+        }
+
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
@@ -202,7 +240,15 @@ namespace SNMP_browser
 
         private void button2_Click(object sender, EventArgs e)
         {
-            grid.Rows.Clear();
+            if (tabPage1 == TabControl.SelectedTab)
+            {
+                grid.Rows.Clear();
+            }else if(tabPage2 == TabControl.SelectedTab)
+            {
+                grid2.Rows.Clear();
+                snmpClient.varBindListPerTrap.Clear();
+                snmpClient.resetTrapCounter();
+            }
         }
 
         private void treeView1_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -215,7 +261,7 @@ namespace SNMP_browser
                  else
                  {
                         string NodeName = treeView1.SelectedNode.Text;
-                        foreach (var i in snmp.lista)
+                        foreach (var i in snmpClient.lista)
                         {
                             if (i.name == NodeName)
                                 addRows(i.Oid);
@@ -225,15 +271,17 @@ namespace SNMP_browser
            
         }
 
+        
+
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
             
-            string oid = snmp.translate(null, treeView1.SelectedNode.Text);
+            string oid = snmpClient.translate(null, treeView1.SelectedNode.Text);
 
             if (treeView1.SelectedNode.Nodes.Count == 0)
             {
-                snmp.GetRequest(oid + ".0");
-                textBox1.Text = snmp.getOidNumber();
+                snmpClient.GetRequest(oid + ".0");
+                textBox1.Text = snmpClient.getOidNumber();
             }
             else
                 textBox1.Text = oid ;
@@ -244,6 +292,11 @@ namespace SNMP_browser
         private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Environment.Exit(0);
         }
     }
 }

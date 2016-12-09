@@ -9,6 +9,8 @@ using System.Net.Sockets;
 using SnmpSharpNet;
 using System.Threading;
 
+
+
 namespace SNMP_browser
 {
     public class SnmpClient
@@ -29,9 +31,13 @@ namespace SNMP_browser
         public string type;
         public string ipPort;
         private Dictionary<string, string> translation;
+        private MainWindow windowHandler;
+        public Dictionary<int, List<VarBind>> varBindListPerTrap;
+        public static int trapCounter = 0;
 
-        public SnmpClient()
+        public SnmpClient(MainWindow windowHandler)
         {
+            this.windowHandler = windowHandler;
             OidNumber = "";
             value = "";
             type = "";
@@ -47,8 +53,14 @@ namespace SNMP_browser
             translation = new Dictionary<string, string>();
             this.readTranslationFile();
 
+            varBindListPerTrap = new Dictionary<int, List<VarBind>>();
             Thread trap_thread = new Thread(trapReceiver);
             trap_thread.Start();
+        }
+
+        public void resetTrapCounter()
+        {
+            trapCounter = 0;
         }
 
         public void Add(string _oidNumber, string _value, string _type, string _ipPort)
@@ -382,41 +394,55 @@ namespace SNMP_browser
                     {
                         // Parse SNMP Version 1 TRAP packet 
                         SnmpV1TrapPacket pkt = new SnmpV1TrapPacket();
+                        string date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                        List<VarBind> varBindContentList = new List<VarBind>();
                         pkt.decode(indata, inlen);
-                        Console.WriteLine("** SNMP Version 1 TRAP received from {0}:", inep.ToString());
-                        Console.WriteLine("*** Trap generic: {0}", pkt.Pdu.Generic);
-                        Console.WriteLine("*** Trap specific: {0}", pkt.Pdu.Specific);
-                        Console.WriteLine("*** Agent address: {0}", pkt.Pdu.AgentAddress.ToString());
-                        Console.WriteLine("*** Timestamp: {0}", pkt.Pdu.TimeStamp.ToString());
-                        Console.WriteLine("*** VarBind count: {0}", pkt.Pdu.VbList.Count);
-                        Console.WriteLine("*** VarBind content:");
+                        //Console.WriteLine("** SNMP Version 1 TRAP received from {0}:", inep.ToString());
+                        //Console.WriteLine("*** Trap generic: {0}", pkt.Pdu.Generic);
+                        //Console.WriteLine("*** Trap specific: {0}", pkt.Pdu.Specific);
+                        //Console.WriteLine("*** Agent address: {0}", pkt.Pdu.AgentAddress.ToString());
+                        //Console.WriteLine("*** Timestamp: {0}", pkt.Pdu.TimeStamp.ToString());
+                        //Console.WriteLine("*** VarBind count: {0}", pkt.Pdu.VbList.Count);
+                        //Console.WriteLine("*** VarBind content:");
                         foreach (Vb v in pkt.Pdu.VbList)
                         {
-                            Console.WriteLine("**** {0} {1}: {2}", v.Oid.ToString(), SnmpConstants.GetTypeName(v.Value.Type), v.Value.ToString());
+                           // Console.WriteLine("**** {0} {1}: {2}", v.Oid.ToString(), SnmpConstants.GetTypeName(v.Value.Type), v.Value.ToString());
+                            varBindContentList.Add(new VarBind(v.Oid.ToString(), SnmpConstants.GetTypeName(v.Value.Type), v.Value.ToString()));
+
                         }
-                        Console.WriteLine("** End of SNMP Version 1 TRAP data.");
+                       // Console.WriteLine("** End of SNMP Version 1 TRAP data.");
+                        string ruleName = "NULL";
+                        varBindListPerTrap.Add(trapCounter, varBindContentList);
+                        windowHandler.addTrap(getGenericType(pkt.Pdu.Generic), pkt.Pdu.AgentAddress.ToString(),date, ruleName);
+                        trapCounter++;
                     }
                     else
                     {
                         // Parse SNMP Version 2 TRAP packet 
                         SnmpV2Packet pkt = new SnmpV2Packet();
+                        string date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                        List<VarBind> varBindContentList = new List<VarBind>();
                         pkt.decode(indata, inlen);
-                        Console.WriteLine("** SNMP Version 2 TRAP received from {0}:", inep.ToString());
+                       // Console.WriteLine("** SNMP Version 2 TRAP received from {0}:", inep.ToString());
                         if ((SnmpSharpNet.PduType)pkt.Pdu.Type != PduType.V2Trap)
                         {
-                            Console.WriteLine("*** NOT an SNMPv2 trap ****");
+                           // Console.WriteLine("*** NOT an SNMPv2 trap ****");
                         }
                         else
                         {
-                            Console.WriteLine("*** Community: {0}", pkt.Community.ToString());
-                            Console.WriteLine("*** VarBind count: {0}", pkt.Pdu.VbList.Count);
-                            Console.WriteLine("*** VarBind content:");
+                            //Console.WriteLine("*** Community: {0}", pkt.Community.ToString());
+                            //Console.WriteLine("*** VarBind count: {0}", pkt.Pdu.VbList.Count);
+                            //Console.WriteLine("*** VarBind content:");
                             foreach (Vb v in pkt.Pdu.VbList)
                             {
-                                Console.WriteLine("**** {0} {1}: {2}",
-                                   v.Oid.ToString(), SnmpConstants.GetTypeName(v.Value.Type), v.Value.ToString());
+                                //Console.WriteLine("**** {0} {1}: {2}",v.Oid.ToString(), SnmpConstants.GetTypeName(v.Value.Type), v.Value.ToString());
+                                varBindContentList.Add(new VarBind(v.Oid.ToString(), SnmpConstants.GetTypeName(v.Value.Type), v.Value.ToString()));
                             }
-                            Console.WriteLine("** End of SNMP Version 2 TRAP data.");
+                            string ruleName = "NULL";
+                            varBindListPerTrap.Add(trapCounter, varBindContentList);
+                            windowHandler.addTrap(pkt.Pdu.TrapObjectID.ToString(), "?", date, ruleName);
+                            trapCounter++;
+                            //Console.WriteLine("** End of SNMP Version 2 TRAP data.");
                         }
                     }
                 }
@@ -428,6 +454,44 @@ namespace SNMP_browser
             }
         
     }
+        private string getGenericType(int generic)
+        {
+            if (generic == 0)
+            {
+                return "coldStart";
+            }else if (generic == 1)
+            {
+                return "warmStart";
+            }else if(generic==2){
+                return "linkDown";
+            } else if (generic == 3)
+            {
+                return "linkUp";
+            } else if (generic == 5)
+            {
+                return "egpNeighborLoss";
+            } else if (generic == 4)
+            {
+                return "authenticationFailure";
+            }else
+            {
+                return "Other";
+            }
+        }
+    }
+}
+
+public class VarBind
+{
+    public string OID;
+    public string type;
+    public string value;
+
+    public VarBind(string OID, string type, string value)
+    {
+        this.OID = OID;
+        this.type = type;
+        this.value = value;
     }
 }
 

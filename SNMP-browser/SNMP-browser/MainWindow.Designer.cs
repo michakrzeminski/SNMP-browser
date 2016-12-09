@@ -1,4 +1,7 @@
-﻿namespace SNMP_browser
+﻿
+using System.Windows.Forms;
+
+namespace SNMP_browser
 {
     partial class MainWindow
     {
@@ -41,9 +44,13 @@
             this.button2 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.grid = new DataGridView();
+            this.grid2 = new DataGridView();
             this.TabControl.SuspendLayout();
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -108,7 +115,7 @@
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage1.Size = new System.Drawing.Size(450, 272);
             this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "ResultTable";
+            this.tabPage1.Text = "Result Table";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // tabPage2
@@ -119,7 +126,7 @@
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage2.Size = new System.Drawing.Size(450, 272);
             this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "ShowTrap";
+            this.tabPage2.Text = "Trap Receiver";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // splitContainer1
@@ -133,6 +140,10 @@
             // 
             this.splitContainer1.Panel1.BackColor = System.Drawing.Color.Transparent;
             this.splitContainer1.Panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer1_Panel1_Paint);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.richTextBox1);
             this.splitContainer1.Size = new System.Drawing.Size(444, 266);
             this.splitContainer1.SplitterDistance = 180;
             this.splitContainer1.TabIndex = 0;
@@ -183,6 +194,15 @@
             this.textBox1.Size = new System.Drawing.Size(180, 20);
             this.textBox1.TabIndex = 7;
             // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.richTextBox1.Location = new System.Drawing.Point(0, 0);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.Size = new System.Drawing.Size(444, 82);
+            this.richTextBox1.TabIndex = 0;
+            this.richTextBox1.Text = "";
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -201,12 +221,16 @@
             this.Load += new System.EventHandler(this.MainWindow_Load);
             this.TabControl.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
+            this.FormClosing += this.MainWindow_FormClosing;
 
         }
+
+       
 
         #endregion
 
@@ -223,6 +247,9 @@
         private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.RichTextBox richTextBox1;
+        private DataGridView grid;
+        private DataGridView grid2;
     }
 }
 
