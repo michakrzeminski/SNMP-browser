@@ -18,6 +18,7 @@ namespace SNMP_browser
         // SNMP community name
         OctetString community = new OctetString("public");
         AgentParameters param;
+
         Pdu pdu;
         SnmpV1Packet result;
         SnmpV2Packet result2;
@@ -34,6 +35,7 @@ namespace SNMP_browser
         private MainWindow windowHandler;
         public Dictionary<int, List<VarBind>> varBindListPerTrap;
         public static int trapCounter = 0;
+        public bool monitor = false;
 
         public SnmpClient(MainWindow windowHandler)
         {
@@ -478,7 +480,28 @@ namespace SNMP_browser
                 return "Other";
             }
         }
+        
+        public void monitorObject(object OID)
+        {
+            while (monitor)
+            {
+                SnmpV1Packet packet = this.GetRequest((string)OID);
+                this.windowHandler.addMonitorRow(packet.Pdu.VbList[0].Oid.ToString(), packet.Pdu.VbList[0].Value.ToString(), packet.Pdu.VbList[0].Type.ToString(), this.ipPort);
+                Thread.Sleep(5000);
+            }
+        }
+
+
+        public SnmpV1Packet GetMonitorRequest(string OID)
+        {
+            this.param.Version = SnmpVersion.Ver1;
+            Pdu pduM = new Pdu(PduType.Get);
+            pduM.VbList.Add(OID);
+            SnmpV1Packet resultM = (SnmpV1Packet)target.Request(pduM, param);
+            return resultM;
+        }
     }
+    
 }
 
 public class VarBind

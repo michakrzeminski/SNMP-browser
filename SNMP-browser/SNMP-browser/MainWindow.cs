@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -26,6 +27,7 @@ namespace SNMP_browser
             InitializeComponent();
             dataGridView();
             trapGridView();
+            monitorGridView();
             
         }
 
@@ -35,7 +37,7 @@ namespace SNMP_browser
             tabPage1.Controls.Add(grid);
             tabPage1.Refresh();
             grid.Visible = true;
-            grid.Size = new System.Drawing.Size(450, 272);
+            grid.Size = new System.Drawing.Size(tabPage1.Width, tabPage1.Height);
             grid.ColumnCount = 4;
             grid.Columns[0].Name = "Name/OID";
             grid.Columns[1].Name = "Value";
@@ -61,7 +63,20 @@ namespace SNMP_browser
             grid2.SelectionChanged += grid2_SelectionChanged;
         }
 
-        
+        private void monitorGridView()
+        {
+            var binding = new BindingSource();
+            tabPage3.Controls.Add(grid3);
+            tabPage3.Refresh();
+            grid3.Visible = true;
+            grid3.Size = new System.Drawing.Size(tabPage3.Width, tabPage3.Height);
+            grid3.ColumnCount = 4;
+            grid3.Columns[0].Name = "Name/OID";
+            grid3.Columns[1].Name = "Value";
+            grid3.Columns[2].Name = "Type";
+            grid3.Columns[3].Name = "IP:Port";
+            grid3.DataSource = binding.DataSource;
+        }
 
         delegate void addTrapCallback(string description, string source, string time, string severity);
 
@@ -80,6 +95,22 @@ namespace SNMP_browser
             }
 
             
+        }
+
+        delegate void addMonitorRowCallback(string OID, string value, string type, string ipPort);
+
+        public void addMonitorRow(string OID, string value, string type, string ipPort)
+        {
+           
+            if (this.grid3.InvokeRequired)
+            {
+                addMonitorRowCallback d = new addMonitorRowCallback(addMonitorRow);
+                this.Invoke(d, new object[] { OID, value, type,ipPort });
+            }
+            else
+            {
+                grid3.Rows.Add(OID, value, type, ipPort);
+            }
         }
 
         private void addRows(string oid)
@@ -142,10 +173,7 @@ namespace SNMP_browser
 
         }
 
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
+        
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -248,6 +276,9 @@ namespace SNMP_browser
                 grid2.Rows.Clear();
                 snmpClient.varBindListPerTrap.Clear();
                 snmpClient.resetTrapCounter();
+            }else if(tabPage3 == TabControl.SelectedTab)
+            {
+                grid3.Rows.Clear();
             }
         }
 
@@ -297,6 +328,22 @@ namespace SNMP_browser
         private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
             Environment.Exit(0);
+        }
+
+        private void monitorButton_Click(object sender, EventArgs e)
+        {
+            string oid = textBox1.Text;
+            TabControl.SelectedTab = tabPage3;
+            snmpClient.monitor = true;
+            Thread monitorThread = new Thread(new ParameterizedThreadStart(snmpClient.monitorObject));
+            monitorThread.Start(oid);
+            
+
+        }
+
+        private void stopButton_Click(object sender, EventArgs e)
+        {
+            snmpClient.monitor = false;
         }
     }
 }
