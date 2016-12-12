@@ -9,15 +9,11 @@ namespace SNMP_browser
     static class Program
     {
 
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
         [STAThread]
         static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-           // SnmpClient client = new SnmpClient();
             MainWindow mainwindow = new MainWindow();
             Application.Run(mainwindow);
         }

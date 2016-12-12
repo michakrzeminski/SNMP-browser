@@ -15,11 +15,6 @@ namespace SNMP_browser
     public partial class MainWindow : Form
     {
         SnmpClient snmpClient;
-       // DataGridView grid = new DataGridView();
-       // DataGridView grid2 = new DataGridView();
-        
-
-
 
         public MainWindow()
         {
@@ -28,7 +23,6 @@ namespace SNMP_browser
             dataGridView();
             trapGridView();
             monitorGridView();
-            
         }
 
         private void dataGridView()
@@ -43,8 +37,7 @@ namespace SNMP_browser
             grid.Columns[1].Name = "Value";
             grid.Columns[2].Name = "Type";
             grid.Columns[3].Name = "IP:Port";
-            grid.DataSource = binding.DataSource;
-            //addRows();    
+            grid.DataSource = binding.DataSource;  
         }
 
         private void trapGridView()
@@ -82,8 +75,6 @@ namespace SNMP_browser
 
         public void addTrap(string description, string source, string time, string severity)
         {
-            //narazie na sztywno ruleName na nic, potem nazwa parametru po czym monituroujemy jak w trap receiver w 
-            //mib browserze
             if (this.grid2.InvokeRequired)
             {
                 addTrapCallback d = new addTrapCallback(addTrap);
@@ -92,16 +83,13 @@ namespace SNMP_browser
             else
             {
                 grid2.Rows.Add(description, source, time, severity);
-            }
-
-            
+            }  
         }
 
         delegate void addMonitorRowCallback(string OID, string value, string type, string ipPort);
 
         public void addMonitorRow(string OID, string value, string type, string ipPort)
-        {
-           
+        {           
             if (this.grid3.InvokeRequired)
             {
                 addMonitorRowCallback d = new addMonitorRowCallback(addMonitorRow);
@@ -164,30 +152,11 @@ namespace SNMP_browser
                 if (i.Oid.Contains("1.3.6.1.2.1.25."))
                     treeView1.Nodes[0].Nodes[0].Nodes[9].Nodes.Add(i.name);
 
-            }
-                
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        
-
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
-        {
-
+            }          
         }
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            //string oid = snmp.translate(null, treeView1.SelectedNode.Text);
             string oid = textBox1.Text;
             if(this.comboBox1.Text == "GetRequest")
             {
@@ -195,15 +164,13 @@ namespace SNMP_browser
                 if(snmpClient.getValue()=="Null")
                     MessageBox.Show("No such name error (127.0.0.1)");
                 else
-                addRows(oid );
-                
+                addRows(oid);
             }
             else if (this.comboBox1.Text == "GetNextRequest")
             {
                 snmpClient.GetNextRequest(oid );
                 addRowsNext(oid );
                 textBox1.Text = snmpClient.getOidNumber();
-
             }
             else if (this.comboBox1.Text == "GetTable")
             {
@@ -242,8 +209,6 @@ namespace SNMP_browser
                         }
                     }
             }
-            Console.WriteLine("koniec");
-
         }
 
         private void grid2_SelectionChanged(object sender, EventArgs e)
@@ -259,11 +224,6 @@ namespace SNMP_browser
 
                 }
             }
-        }
-
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -316,13 +276,6 @@ namespace SNMP_browser
             }
             else
                 textBox1.Text = oid ;
-
-
-        }
-
-        private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
-        {
-
         }
 
         private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
@@ -336,9 +289,7 @@ namespace SNMP_browser
             TabControl.SelectedTab = tabPage3;
             snmpClient.monitor = true;
             Thread monitorThread = new Thread(new ParameterizedThreadStart(snmpClient.monitorObject));
-            monitorThread.Start(oid);
-            
-
+            monitorThread.Start(oid);         
         }
 
         private void stopButton_Click(object sender, EventArgs e)
