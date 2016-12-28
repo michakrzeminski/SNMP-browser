@@ -1,14 +1,12 @@
+Etap 3 Proxy i Android
+-aplikacja agenta proxy w Windowsie
+-konsola zarzadzania w Androidzie
+	za pomoca agenta proxy bedzie mogla odczytywac wybrany fragment modelu
+
 TODO:
-Micha³:
--dodanie nazw do treeView
-Patryk:
--trapy i monitorowane obiekty
-Tomek:
--getTable
-
-- wrzuca do drzewa tylko te ktore maja w pliku swoje nazwy
-- opuszcza pare tabel niestety tj. tcpConnTable, ipRouteTable, ipNetToMediaTable
-- nie robic translate'a dla wpisanego OID'a recznie w okienku po lewej
-- getTable tylko dla oidow oznaczajacych tabele
-
+-dolaczyc do projektu etap2 agenta proxy ktory bedzie mial wyjscie (np. socket) z androidem
+-projekt w android studio
+-GUI w designerze androidowym
+-socket w androidzie do komjnikacji przez proxy
+-protokol, komunikacja aby na androidzie wyswietlac modele z agenta windowsowego
 
