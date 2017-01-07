@@ -10,3 +10,11 @@ TODO:
 -socket w androidzie do komjnikacji przez proxy
 -protokol, komunikacja aby na androidzie wyswietlac modele z agenta windowsowego
 
+Android:
+-zmienic parametry swapowania
+-swapowanie powrotne z settingsow
+-dane podfolderow 
+-xml nazwa/oid
+-wiecej rzeczy w settingsach
+-wszystkie ikonki zmienic na ten monitor a nie tylko 2 jak jest teraz
+
