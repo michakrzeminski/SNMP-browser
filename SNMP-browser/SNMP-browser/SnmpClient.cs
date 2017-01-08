@@ -35,6 +35,10 @@ namespace SNMP_browser
         public static int trapCounter = 0;
         public bool monitor = false;
 
+        private TcpListener listener;
+        private int proxyPort;
+       // private static BinaryWriter writer;
+
         public SnmpClient(MainWindow windowHandler)
         {
             this.windowHandler = windowHandler;
@@ -54,6 +58,35 @@ namespace SNMP_browser
             varBindListPerTrap = new Dictionary<int, List<VarBind>>();
             Thread trap_thread = new Thread(trapReceiver);
             trap_thread.Start();
+        }
+
+        public SnmpClient()
+        {
+            OidNumber = "";
+            value = "";
+            type = "";
+            ipPort = "";
+            param = new AgentParameters(community);
+            param.Version = SnmpVersion.Ver1;
+
+            IpAddress agent = new IpAddress(address);
+            target = new UdpTarget((IPAddress)agent, 161, 2000, 2);
+
+
+            proxyPort = 1111;
+            listener = new TcpListener(IPAddress.Parse(GetLocalIPAddress()), proxyPort);
+            Thread thread = new Thread(new ThreadStart(Listen));
+            thread.Start();
+
+            Console.WriteLine("Start SNMP proxy serwer");
+            Console.WriteLine("IP: " + GetLocalIPAddress() + " Port: "+ proxyPort);
+
+            // translation = new Dictionary<string, string>();
+            // this.readTranslationFile();
+
+            //varBindListPerTrap = new Dictionary<int, List<VarBind>>();
+            /// Thread trap_thread = new Thread(trapReceiver);
+            // trap_thread.Start();
         }
 
         public void resetTrapCounter()
@@ -444,7 +477,68 @@ namespace SNMP_browser
             SnmpV1Packet resultM = (SnmpV1Packet)target.Request(pduM, param);
             return resultM;
         }
+
+        private void Listen()
+        {
+            listener.Start();
+
+            while (true)
+            {
+                TcpClient client = listener.AcceptTcpClient();
+                Thread clientThread = new Thread(new ParameterizedThreadStart(ListenThread));
+                clientThread.Start(client);
+            }
+        }
+
+        private void ListenThread(Object client)
+        {
+            TcpClient clienttmp = (TcpClient)client;
+            BinaryReader reader = new BinaryReader(clienttmp.GetStream());
+            BinaryWriter writer = new BinaryWriter(clienttmp.GetStream());
+            while (true)
+            {
+                string received_data = reader.ReadString();
+                Console.WriteLine(received_data);
+                JMessage received_object = JMessage.Deserialize(received_data);
+                if (received_object.Type == typeof(SNMPQuery))
+                {
+                    SNMPQuery received_query = received_object.Value.ToObject<SNMPQuery>();
+                    string data = JMessage.Serialize(JMessage.FromValue(sendRequest(received_query.oid)));
+                    Console.WriteLine(data);
+                    writer.Write(data);
+                 
+                }
+                else
+                {
+                    Console.WriteLine("Wrong received message format");
+                }
+            }
+
+            // reader.Close();
+        }
+
+        private SNMPJsonPacket sendRequest(string oid)
+        {
+            SnmpV1Packet packet = this.GetRequest((string)oid);
+            SNMPJsonPacket packetJson = new SNMPJsonPacket(packet.Pdu.VbList[0].Oid.ToString(), packet.Pdu.VbList[0].Value.ToString(), packet.Pdu.VbList[0].Type.ToString());
+            return packetJson;
+        }
+
+        private static string GetLocalIPAddress()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return ip.ToString();
+                }
+            }
+            throw new Exception("Local IP Address Not Found!");
+        }
     }
+
+    
 }
 
 public class VarBind
