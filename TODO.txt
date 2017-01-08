@@ -10,7 +10,4 @@ TODO:
 -protokol, komunikacja aby na androidzie wyswietlac modele z agenta windowsowego
 
 Android:
--xml nazwa/oid
--wiecej rzeczy w settingsach
--ladna grafika, zeby to wygladalo a nie tylko dzialalo
-
+-graficznie zeby to sie ladnie prezentowalo

@@ -1,7 +1,9 @@
 package com.zst.hp.snmp_android;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import java.util.ArrayList;
@@ -12,16 +14,25 @@ import java.util.Vector;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.text.Layout;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.ExpandableListView.OnGroupCollapseListener;
 import android.widget.ExpandableListView.OnGroupExpandListener;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 
 public class snmp extends Activity {
 
@@ -30,6 +41,7 @@ public class snmp extends Activity {
     List<String> listFolders;
     HashMap<String, List<String>> listChild;
 
+    PopupWindow popUpWindow;
     private GestureDetector gestureDetector;
 
     @Override
@@ -48,6 +60,42 @@ public class snmp extends Activity {
         expListView.setAdapter(listAdapter);
 
         gestureDetector = new GestureDetector(new SwipeGestureDetector());
+
+        popUpWindow = new PopupWindow(this);
+
+        // Listview on child click listener
+        expListView.setOnChildClickListener(new OnChildClickListener() {
+
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v,int groupPosition, int childPosition, long id) {
+                String name = listChild.get(listFolders.get(groupPosition)).get(childPosition);
+                String oid = getResources().getString(getResources().getIdentifier(name,"string",getPackageName()));
+
+                //Popup
+                LayoutInflater layoutInflater = (LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+                View popupView = layoutInflater.inflate(R.layout.popup, null);
+                final PopupWindow popupWindow = new PopupWindow(popupView, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+
+                Button btnOk = (Button)popupView.findViewById(R.id.ok);
+                btnOk.setOnClickListener(new Button.OnClickListener(){
+
+                    @Override
+                    public void onClick(View v) {
+                        popupWindow.dismiss();
+                    }});
+
+                popupWindow.showAtLocation(findViewById(R.id.activity_snmp) , Gravity.CENTER, 0, 0);
+
+                //wartosci tekstowe
+                TextView popupname = (TextView) popupWindow.getContentView().findViewById(R.id.PopupName);
+                popupname.setText(name);
+                TextView popupvalue = (TextView) popupWindow.getContentView().findViewById(R.id.PopupValue);
+                popupvalue.setText(oid); //tymczasowe poki nie ma wartosci z SNMP
+
+                return false;
+            }
+        });
+
     }
 
     @Override

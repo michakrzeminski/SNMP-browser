@@ -1,2 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="sysDescr">1.3.6.1.2.1.1.1</string>
+    <string name="sysObjectID">1.3.6.1.2.1.1.2</string>
+    <string name="sysUpTime">1.3.6.1.2.1.1.3</string>
+    <string name="sysContact">1.3.6.1.2.1.1.4</string>
+    <string name="sysName">1.3.6.1.2.1.1.5</string>
+    <string name="sysLocation">1.3.6.1.2.1.1.6</string>
+    <string name="sysServices">1.3.6.1.2.1.1.7</string>
+
+    <string name="ifNumber">1.3.6.1.2.1.2.1</string>
+    <string name="ifTable">1.3.6.1.2.1.2.2</string>
+
+    <string name="ipForwarding">1.3.6.1.2.1.4.1</string>
+    <string name="ipDefaultTTL">1.3.6.1.2.1.4.2</string>
+    <string name="ipInReceives">1.3.6.1.2.1.4.3</string>
+    <string name="ipInHdrErrors">1.3.6.1.2.1.4.4</string>
+    <string name="ipInAddrErrors">1.3.6.1.2.1.4.5</string>
+    <string name="ipForwDatagrams">1.3.6.1.2.1.4.6</string>
+    <string name="ipInUnknownProtos">1.3.6.1.2.1.4.7</string>
+    <string name="ipInDiscards">1.3.6.1.2.1.4.8</string>
+    <string name="ipInDelivers">1.3.6.1.2.1.4.9</string>
+    <string name="ipOutRequests">1.3.6.1.2.1.4.10</string>
+    <string name="ipOutDiscards">1.3.6.1.2.1.4.11</string>
+    <string name="ipOutNoRoutes">1.3.6.1.2.1.4.12</string>
+    <string name="ipReasmTimeout">1.3.6.1.2.1.4.13</string>
+    <string name="ipReasmReqds">1.3.6.1.2.1.4.14</string>
+    <string name="ipReasmOKs">1.3.6.1.2.1.4.15</string>
+    <string name="ipReasmFails">1.3.6.1.2.1.4.16</string>
+    <string name="ipFragOKs">1.3.6.1.2.1.4.17</string>
+    <string name="ipFragFails">1.3.6.1.2.1.4.18</string>
+    <string name="ipFragCreates">1.3.6.1.2.1.4.19</string>
+    <string name="ipAddrTable">1.3.6.1.2.1.4.20</string>
+    <string name="ipRouteTable">1.3.6.1.2.1.4.21</string>
+    <string name="ipNetToMediaTable">1.3.6.1.2.1.4.22</string>
+    <string name="ipRoutingDiscards">1.3.6.1.2.1.4.23</string>
+
+    <string name="icmpInMsgs">1.3.6.1.2.1.5.1</string>
+    <string name="icmpInErrors">1.3.6.1.2.1.5.2</string>
+    <string name="icmpInDestUnreachs">1.3.6.1.2.1.5.3</string>
+    <string name="icmpInTimeExcds">1.3.6.1.2.1.5.4</string>
+    <string name="icmpInParmProbs">1.3.6.1.2.1.5.5</string>
+    <string name="icmpInSrcQuenchs">1.3.6.1.2.1.5.6</string>
+    <string name="icmpInRedirects">1.3.6.1.2.1.5.7</string>
+    <string name="icmpInEchos">1.3.6.1.2.1.5.8</string>
+    <string name="icmpInEchoReps">1.3.6.1.2.1.5.9</string>
+    <string name="icmpInTimestamps">1.3.6.1.2.1.5.10</string>
+    <string name="icmpInTimestampReps">1.3.6.1.2.1.5.11</string>
+    <string name="icmpInAddrMasks">1.3.6.1.2.1.5.12</string>
+    <string name="icmpInAddrMaskReps">1.3.6.1.2.1.5.13</string>
+    <string name="icmpOutMsgs">1.3.6.1.2.1.5.14</string>
+    <string name="icmpOutErrors">1.3.6.1.2.1.5.15</string>
+    <string name="icmpOutDestUnreachs">1.3.6.1.2.1.5.16</string>
+    <string name="icmpOutTimeExcds">1.3.6.1.2.1.5.17</string>
+    <string name="icmpOutParmProbs">1.3.6.1.2.1.5.18</string>
+    <string name="icmpOutSrcQuenchs">1.3.6.1.2.1.5.19</string>
+    <string name="icmpOutRedirects">1.3.6.1.2.1.5.20</string>
+    <string name="icmpOutEchos">1.3.6.1.2.1.5.21</string>
+    <string name="icmpOutEchoReps">1.3.6.1.2.1.5.22</string>
+    <string name="icmpOutTimestamps">1.3.6.1.2.1.5.23</string>
+    <string name="icmpOutTimestampReps">1.3.6.1.2.1.5.24</string>
+    <string name="icmpOutAddrMasks">1.3.6.1.2.1.5.25</string>
+    <string name="icmpOutAddrMaskReps">1.3.6.1.2.1.5.26</string>
+
+    <string name="tcpRtoAlgorithm">1.3.6.1.2.1.6.1</string>
+    <string name="tcpRtoMin">1.3.6.1.2.1.6.2</string>
+    <string name="tcpRtoMax">1.3.6.1.2.1.6.3</string>
+    <string name="tcpMaxConn">1.3.6.1.2.1.6.4</string>
+    <string name="tcpActiveOpens">1.3.6.1.2.1.6.5</string>
+    <string name="tcpPassiveOpens">1.3.6.1.2.1.6.6</string>
+    <string name="tcpAttemptFails">1.3.6.1.2.1.6.7</string>
+    <string name="tcpEstabResets">1.3.6.1.2.1.6.8</string>
+    <string name="tcpCurrEstab">1.3.6.1.2.1.6.9</string>
+    <string name="tcpInSegs">1.3.6.1.2.1.6.10</string>
+    <string name="tcpOutSegs">1.3.6.1.2.1.6.11</string>
+    <string name="tcpRetransSegs">1.3.6.1.2.1.6.12</string>
+    <string name="tcpConnTable">1.3.6.1.2.1.6.13</string>
+    <string name="tcpInErrs">1.3.6.1.2.1.6.14</string>
+    <string name="tcpOutRsts">1.3.6.1.2.1.6.15</string>
+
+    <string name="udpInDatagrams">1.3.6.1.2.1.7.1</string>
+    <string name="udpNoPorts">1.3.6.1.2.1.7.2</string>
+    <string name="udpInErrors">1.3.6.1.2.1.7.3</string>
+    <string name="udpOutDatagrams">1.3.6.1.2.1.7.4</string>
+    <string name="udpTable">1.3.6.1.2.1.7.5</string>
+
+    <string name="snmpInPkts">1.3.6.1.2.1.11.1</string>
+    <string name="snmpOutPkts">1.3.6.1.2.1.11.2</string>
+    <string name="snmpInBadVersions">1.3.6.1.2.1.11.3</string>
+    <string name="snmpInBadCommunityNames">1.3.6.1.2.1.11.4</string>
+    <string name="snmpInBadCommunityUses">1.3.6.1.2.1.11.5</string>
+    <string name="snmpInASNParseErrs">1.3.6.1.2.1.11.6</string>
+    <string name="snmpInTooBigs">1.3.6.1.2.1.11.8</string>
+    <string name="snmpInNoSuchNames">1.3.6.1.2.1.11.9</string>
+    <string name="snmpInBadValues">1.3.6.1.2.1.11.10</string>
+    <string name="snmpInReadOnlys">1.3.6.1.2.1.11.11</string>
+    <string name="snmpInGenErrs">1.3.6.1.2.1.11.12</string>
+    <string name="snmpInTotalReqVars">1.3.6.1.2.1.11.13</string>
+    <string name="snmpInTotalSetVars">1.3.6.1.2.1.11.14</string>
+    <string name="snmpInGetRequests">1.3.6.1.2.1.11.15</string>
+    <string name="snmpInGetNexts">1.3.6.1.2.1.11.16</string>
+    <string name="snmpInSetRequests">1.3.6.1.2.1.11.17</string>
+    <string name="snmpInGetResponses">1.3.6.1.2.1.11.18</string>
+    <string name="snmpInTraps">1.3.6.1.2.1.11.19</string>
+    <string name="snmpOutTooBigs">1.3.6.1.2.1.11.20</string>
+    <string name="snmpOutNoSuchNames">1.3.6.1.2.1.11.21</string>
+    <string name="snmpOutBadValues">1.3.6.1.2.1.11.22</string>
+    <string name="snmpOutGenErrs">1.3.6.1.2.1.11.24</string>
+    <string name="snmpOutGetRequests">1.3.6.1.2.1.11.25</string>
+    <string name="snmpOutGetNexts">1.3.6.1.2.1.11.26</string>
+    <string name="snmpOutSetRequests">1.3.6.1.2.1.11.27</string>
+    <string name="snmpOutGetResponses">1.3.6.1.2.1.11.28</string>
+    <string name="snmpOutTraps">1.3.6.1.2.1.11.29</string>
+    <string name="snmpEnableAuthenTraps">1.3.6.1.2.1.11.30</string>
+
+    <string name="hrSystem">1.3.6.1.2.1.25.1</string>
+    <string name="hrSystemUptime">1.3.6.1.2.1.25.1.1</string>
+    <string name="hrSystemDate">1.3.6.1.2.1.25.1.2</string>
+
+</resources>
