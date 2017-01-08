@@ -6,15 +6,11 @@ Etap 3 Proxy i Android
 TODO:
 -dolaczyc do projektu etap2 agenta proxy ktory bedzie mial wyjscie (np. socket) z androidem
 -projekt w android studio
--GUI w designerze androidowym
--socket w androidzie do komjnikacji przez proxy
+-socket w androidzie do komunikacji przez proxy
 -protokol, komunikacja aby na androidzie wyswietlac modele z agenta windowsowego
 
 Android:
--zmienic parametry swapowania
--swapowanie powrotne z settingsow
--dane podfolderow 
 -xml nazwa/oid
 -wiecej rzeczy w settingsach
--wszystkie ikonki zmienic na ten monitor a nie tylko 2 jak jest teraz
+-ladna grafika, zeby to wygladalo a nie tylko dzialalo
 

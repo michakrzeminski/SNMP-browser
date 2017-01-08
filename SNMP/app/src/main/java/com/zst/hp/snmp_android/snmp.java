@@ -5,6 +5,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
@@ -59,11 +60,8 @@ public class snmp extends Activity {
 
     private void onLeftSwipe() {
         Intent intent = new Intent(snmp.this, Settings.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(intent);
-    }
-
-    private void onRightSwipe() {
-        //TODO
     }
 
     private void prepareListData() {
@@ -80,29 +78,14 @@ public class snmp extends Activity {
         listFolders.add("Snmp");
         listFolders.add("Host");
 
-        List<String> system = new ArrayList<String>();
-        system.add("Test1");
-
-        List<String> interfaces = new ArrayList<String>();
-        interfaces.add("Test2");
-
-        List<String> ip = new ArrayList<String>();
-        ip.add("Test3");
-
-        List<String> icmp = new ArrayList<String>();
-        ip.add("Test4");
-
-        List<String> tcp = new ArrayList<String>();
-        ip.add("Test5");
-
-        List<String> udp = new ArrayList<String>();
-        ip.add("Test6");
-
-        List<String> snmp = new ArrayList<String>();
-        ip.add("Test7");
-
-        List<String> host = new ArrayList<String>();
-        ip.add("Test8");
+        List<String> system = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.System)));
+        List<String> interfaces = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.Interfaces)));
+        List<String> ip = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.Ip)));
+        List<String> icmp = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.Icmp)));
+        List<String> tcp = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.Tcp)));
+        List<String> udp = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.Udp)));
+        List<String> snmp = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.Snmp)));
+        List<String> host = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.Host)));
 
         listChild.put(listFolders.get(0), system);
         listChild.put(listFolders.get(1), interfaces);
@@ -112,14 +95,15 @@ public class snmp extends Activity {
         listChild.put(listFolders.get(5), udp);
         listChild.put(listFolders.get(6), snmp);
         listChild.put(listFolders.get(7), host);
+
     }
 
     private class SwipeGestureDetector extends GestureDetector.SimpleOnGestureListener {
         // Swipe properties, you can change it to make the swipe
         // longer or shorter and speed
-        private static final int SWIPE_MIN_DISTANCE = 120;
+        private static final int SWIPE_MIN_DISTANCE = 60;
         private static final int SWIPE_MAX_OFF_PATH = 200;
-        private static final int SWIPE_THRESHOLD_VELOCITY = 200;
+        private static final int SWIPE_THRESHOLD_VELOCITY = 100;
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
@@ -134,11 +118,6 @@ public class snmp extends Activity {
                 if (diff > SWIPE_MIN_DISTANCE
                         && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                     snmp.this.onLeftSwipe();
-
-                    // Right swipe
-                } else if (-diff > SWIPE_MIN_DISTANCE
-                        && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                    snmp.this.onRightSwipe();
                 }
             } catch (Exception e) {
                 Log.e("Snmp", "Error on gestures");
