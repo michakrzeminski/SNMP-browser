@@ -7,17 +7,42 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 public class Settings extends Activity {
 
+    TextView response;
+    EditText editTextAddress, editTextPort;
+    Button buttonConnect;
     private GestureDetector gestureDetector;
-
+    Connection connection;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        editTextAddress = (EditText) findViewById(R.id.editText);
+        editTextPort = (EditText) findViewById(R.id.editText2);
+        buttonConnect = (Button) findViewById(R.id.button);
+        response = (TextView) findViewById(R.id.responseTextView);
         gestureDetector = new GestureDetector(new SwipeGestureDetector());
+    }
+
+    public void buttonOnClick(View v)
+    {
+        Log.i("AAAA","Wchodze do conection");
+        connection = new Connection(editTextAddress.getText()
+                .toString(), Integer.parseInt(editTextPort
+                .getText().toString()), response);
+       connection.execute();
+
+
+        // Perform action on click
+
+
     }
 
     @Override
