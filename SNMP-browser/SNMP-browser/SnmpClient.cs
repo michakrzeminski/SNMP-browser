@@ -73,14 +73,21 @@ namespace SNMP_browser
             target = new UdpTarget((IPAddress)agent, 161, 2000, 2);
 
 
+<<<<<<< HEAD
             proxyPort = 1235;
+=======
+            proxyPort = 1111;
+>>>>>>> ecda6298a0892945fce5c0c09910825177ddf8e5
             listener = new TcpListener(IPAddress.Parse(GetLocalIPAddress()), proxyPort);
             Thread thread = new Thread(new ThreadStart(Listen));
             thread.Start();
 
             Console.WriteLine("Start SNMP proxy serwer");
             Console.WriteLine("IP: " + GetLocalIPAddress() + " Port: "+ proxyPort);
+<<<<<<< HEAD
             test();
+=======
+>>>>>>> ecda6298a0892945fce5c0c09910825177ddf8e5
 
             // translation = new Dictionary<string, string>();
             // this.readTranslationFile();
@@ -563,6 +570,7 @@ namespace SNMP_browser
         }
     }
 
+    }
 
     
 }
