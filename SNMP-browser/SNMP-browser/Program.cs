@@ -12,10 +12,11 @@ namespace SNMP_browser
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            MainWindow mainwindow = new MainWindow();
-            Application.Run(mainwindow);
+            // Application.EnableVisualStyles();
+            // Application.SetCompatibleTextRenderingDefault(false);
+            // MainWindow mainwindow = new MainWindow();
+            // Application.Run(mainwindow);
+            SnmpClient client = new SnmpClient();
         }
     }
 }
