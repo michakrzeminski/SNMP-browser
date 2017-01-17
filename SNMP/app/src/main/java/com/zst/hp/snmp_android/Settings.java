@@ -14,11 +14,11 @@ import android.widget.TextView;
 
 public class Settings extends Activity {
 
-    TextView response;
+    public EditText response;
     EditText editTextAddress, editTextPort;
     Button buttonConnect;
     private GestureDetector gestureDetector;
-    Connection connection;
+    public Connection connection;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,7 +27,7 @@ public class Settings extends Activity {
         editTextAddress = (EditText) findViewById(R.id.editText);
         editTextPort = (EditText) findViewById(R.id.editText2);
         buttonConnect = (Button) findViewById(R.id.button);
-        response = (TextView) findViewById(R.id.responseTextView);
+        response = (EditText) findViewById(R.id.responseEditText);
         gestureDetector = new GestureDetector(new SwipeGestureDetector());
     }
 
@@ -57,6 +57,7 @@ public class Settings extends Activity {
         Intent intent = new Intent(Settings.this, snmp.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(intent);
+
     }
 
     private class SwipeGestureDetector extends GestureDetector.SimpleOnGestureListener {

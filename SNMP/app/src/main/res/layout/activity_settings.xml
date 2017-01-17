@@ -76,9 +76,10 @@
         android:id="@+id/button"
         android:onClick="buttonOnClick" />
 
-    <TextView
+    <EditText
         android:text=" "
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/responseTextView" />
+
+        android:id="@+id/responseEditText" />
 </LinearLayout>

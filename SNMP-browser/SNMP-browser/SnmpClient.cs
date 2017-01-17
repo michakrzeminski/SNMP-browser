@@ -73,21 +73,19 @@ namespace SNMP_browser
             target = new UdpTarget((IPAddress)agent, 161, 2000, 2);
 
 
-<<<<<<< HEAD
             proxyPort = 1235;
-=======
-            proxyPort = 1111;
->>>>>>> ecda6298a0892945fce5c0c09910825177ddf8e5
             listener = new TcpListener(IPAddress.Parse(GetLocalIPAddress()), proxyPort);
             Thread thread = new Thread(new ThreadStart(Listen));
             thread.Start();
 
             Console.WriteLine("Start SNMP proxy serwer");
             Console.WriteLine("IP: " + GetLocalIPAddress() + " Port: "+ proxyPort);
-<<<<<<< HEAD
-            test();
-=======
->>>>>>> ecda6298a0892945fce5c0c09910825177ddf8e5
+           // test();
+           // GetRequest("1.3.6.1.2.1.1.1.0");
+           // Console.WriteLine(getOidNumber());
+           // Console.WriteLine(getValue());
+           // Console.WriteLine(getType());
+           // Console.WriteLine(getIpPort());
 
             // translation = new Dictionary<string, string>();
             // this.readTranslationFile();
@@ -502,25 +500,45 @@ namespace SNMP_browser
         private void ListenThread(Object client)
         {
             TcpClient clienttmp = (TcpClient)client;
-            BinaryReader reader = new BinaryReader(clienttmp.GetStream());
-            BinaryWriter writer = new BinaryWriter(clienttmp.GetStream());
+            //BinaryReader reader = new BinaryReader(clienttmp.GetStream());
+            StreamReader read = new StreamReader(clienttmp.GetStream());
+            //BinaryWriter writer = new BinaryWriter(clienttmp.GetStream());
+            StreamWriter write = new StreamWriter(clienttmp.GetStream());
+            
             while (true)
             {
-                string received_data = reader.ReadString();
+                String received_data = read.ReadLine();
                 Console.WriteLine(received_data);
-                JMessage received_object = JMessage.Deserialize(received_data);
+                SNMPJsonPacket packet = sendRequest(received_data);
+                //GetRequest(received_data);
+               // Console.WriteLine(packet.value);
+
+                 //write.Write(packet.value);
+                if (packet.value != null)
+                {
+                    write.Write(packet.value.ToString());
+                    Console.WriteLine("wyslano " + packet.value);
+                }
+                 
+                
+               /* SNMPQuery querry = new SNMPQuery(received_data);
+                string date = JMessage.Serialize(JMessage.FromValue(querry));
+                JMessage received_object = JMessage.Deserialize(date);
                 if (received_object.Type == typeof(SNMPQuery))
                 {
                     SNMPQuery received_query = received_object.Value.ToObject<SNMPQuery>();
                     string data = JMessage.Serialize(JMessage.FromValue(sendRequest(received_query.oid)));
+
                     Console.WriteLine(data);
                     writer.Write(data);
+                    break;
                  
                 }
+            
                 else
                 {
                     Console.WriteLine("Wrong received message format");
-                }
+                }*/
             }
 
             // reader.Close();
@@ -570,7 +588,6 @@ namespace SNMP_browser
         }
     }
 
-    }
 
     
 }

@@ -40,6 +40,8 @@ public class snmp extends Activity {
     ExpandableListView expListView;
     List<String> listFolders;
     HashMap<String, List<String>> listChild;
+    Connection connection;
+
 
     PopupWindow popUpWindow;
     private GestureDetector gestureDetector;
@@ -78,19 +80,20 @@ public class snmp extends Activity {
 
                 Button btnOk = (Button)popupView.findViewById(R.id.ok);
                 btnOk.setOnClickListener(new Button.OnClickListener(){
-
                     @Override
                     public void onClick(View v) {
                         popupWindow.dismiss();
                     }});
 
                 popupWindow.showAtLocation(findViewById(R.id.activity_snmp) , Gravity.CENTER, 0, 0);
+                //connection.getInstance();
+                //connection.sendMessage(oid);
 
                 //wartosci tekstowe
                 TextView popupname = (TextView) popupWindow.getContentView().findViewById(R.id.PopupName);
                 popupname.setText(name);
                 TextView popupvalue = (TextView) popupWindow.getContentView().findViewById(R.id.PopupValue);
-                popupvalue.setText(oid); //tymczasowe poki nie ma wartosci z SNMP
+                popupvalue.setText(connection.getRecieveMessage()); //tymczasowe poki nie ma wartosci z SNMP
 
                 return false;
             }

@@ -8,11 +8,11 @@ namespace SNMP_browser
 {
     class SNMPJsonPacket
     {
-        private string oid { get; set; }
+        public string oid { get; set; }
 
-        private string value { get; set; }
+        public string value { get; set; }
 
-        private string type { get; set; }
+        public string type { get; set; }
         
         public SNMPJsonPacket(string oid, string value, string type)
         {

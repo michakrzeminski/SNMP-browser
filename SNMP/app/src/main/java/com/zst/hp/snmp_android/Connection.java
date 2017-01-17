@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import android.util.Log;
 import android.os.AsyncTask;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import android.util.Log;
@@ -18,6 +19,10 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.io.ByteArrayOutputStream;
 import java.net.UnknownHostException;
+import java.io.OutputStreamWriter;
+import java.io.BufferedOutputStream;
+import java.util.Arrays;
+import java.io.PrintStream;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,48 +30,78 @@ import org.json.JSONObject;
 
 
 
-public class Connection extends AsyncTask<Void, Void, Void> {
+public class Connection extends AsyncTask<String, String, String> {
 
+        PrintStream writer;
+        InputStreamReader reader;
+        BufferedReader br;
         String dstAddress;
         int dstPort;
         String response = "";
-        TextView textResponse;
-        String in = "1.3.6.1.2.1.1.1";
-        String s = "{\"Type\":\"SNMP_browser.SNMPQuery, SNMP-browser, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null\",\"Value\":{\"oid\":\"1.3.6.1.2.1.1.1\"}}";
+        EditText textResponse;
+        String oid = "1.3.6.1.2.1.1.1.0";
+        String recieve_message ="nic";
 
-    Connection(String addr, int port, TextView textResponse) {
+    private static Connection instance = null;
+    protected Connection() {
+        // Exists only to defeat instantiation.
+    }
+    public static Connection getInstance() {
+        if(instance == null) {
+            instance = new Connection();
+        }
+        return instance;
+    }
+
+    Connection(String addr, int port, EditText Response) {
         dstAddress = addr;
         dstPort = port;
-        this.textResponse = textResponse;
+        this.textResponse = Response;
         Log.i("BBBB","Connection");
-
         }
 
 @Override
-protected Void doInBackground(Void... arg0)
+protected String doInBackground(String... params)
         {
-
             Socket socket = null;
-
-
             try
             {
-                Log.i("BBB","Proba polaczenia z" +dstAddress+" na "+ dstPort);
-            socket = new Socket(dstAddress, dstPort);
-                Log.i("BBB","Poloczono");
-                Log.i("BBB","wysylanie");
-                //writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                Log.i("BBB", "Proba polaczenia z" + dstAddress + " na " + dstPort);
+                socket = new Socket(dstAddress, dstPort);
+                Log.i("BBB", "Poloczono");
+                writer = new PrintStream(socket.getOutputStream());
+
+                br = new BufferedReader(new InputStreamReader(socket.getInputStream(),"UTF-8"));
+                sendMessage(oid);
+            while(true) {
+                Log.i("BBB", "czekamy");
+                System.out.println(br.readLine());
+                //recieve_message =  br.readLine();
+                Log.i("A",recieve_message);
+
+               // Log.i("BBB", "odebrano: "+recieve_message);
+
                 //writer.write(JSON);
-                OutputStream os = socket.getOutputStream();
-                PrintWriter pw = new PrintWriter(os, true);
-                Log.i("AAA","wysylam"+s);
-                pw.println(s);
-                InputStream is = socket.getInputStream();
-                BufferedReader br = new BufferedReader(
-                        new InputStreamReader(is));
-                Log.i("A",br.readLine());
+                //OutputStream os = socket.getOutputStream();
+                //ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(
+                //     1024);
+                // byte[] buffer = new byte[1024];
 
+                //BufferedReader br = new BufferedReader(new InputStreamReader(i));
+                //DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+                //buffer = s.getBytes();
+                // byte[] bytes = in.getBytes();
 
+                //PrintWriter pw = new PrintWriter(dos, true);
+                //Log.i("AAA", "wysylam: ");
+                //dos.writeBytes(s);
+                //pw.println(in);
+
+                //String wiadomosc = br.readLine();
+                //Log.i("a", "czekam");
+                //Log.i("A", wiadomosc);
+
+            }
             } catch (UnknownHostException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -75,21 +110,33 @@ protected Void doInBackground(Void... arg0)
             // TODO Auto-generated catch block
             e.printStackTrace();
             response = "IOException: " + e.toString();
-            }finally {
-            if (socket != null) {
-            try {
-            socket.close();
-            } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            }
-            }
+            }finally
+            {
+                if (socket != null)
+                {
+                    try {
+                    socket.close();
+                    } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                    }
+                }
             }
         return null;
         }
 
+
+    public void sendMessage(String oid)
+    {
+        writer.println(oid);
+        Log.i("BBB", "wysylanie");
+    }
+    public String getRecieveMessage()
+    {
+        return recieve_message;
+    }
 @Override
-protected void onPostExecute(Void result) {
+protected void onPostExecute(String result) {
         textResponse.setText(response);
         super.onPostExecute(result);
         }
