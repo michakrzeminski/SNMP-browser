@@ -58,6 +58,7 @@ public class Connection extends AsyncTask<String, String, String> {
         dstPort = port;
         this.textResponse = Response;
         Log.i("BBBB","Connection");
+        
         }
 
 @Override
@@ -70,36 +71,11 @@ protected String doInBackground(String... params)
                 socket = new Socket(dstAddress, dstPort);
                 Log.i("BBB", "Poloczono");
                 writer = new PrintStream(socket.getOutputStream());
-
                 br = new BufferedReader(new InputStreamReader(socket.getInputStream(),"UTF-8"));
                 sendMessage(oid);
             while(true) {
-                Log.i("BBB", "czekamy");
-                System.out.println(br.readLine());
-                //recieve_message =  br.readLine();
+                recieve_message =  br.readLine();
                 Log.i("A",recieve_message);
-
-               // Log.i("BBB", "odebrano: "+recieve_message);
-
-                //writer.write(JSON);
-                //OutputStream os = socket.getOutputStream();
-                //ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(
-                //     1024);
-                // byte[] buffer = new byte[1024];
-
-                //BufferedReader br = new BufferedReader(new InputStreamReader(i));
-                //DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
-                //buffer = s.getBytes();
-                // byte[] bytes = in.getBytes();
-
-                //PrintWriter pw = new PrintWriter(dos, true);
-                //Log.i("AAA", "wysylam: ");
-                //dos.writeBytes(s);
-                //pw.println(in);
-
-                //String wiadomosc = br.readLine();
-                //Log.i("a", "czekam");
-                //Log.i("A", wiadomosc);
 
             }
             } catch (UnknownHostException e) {
