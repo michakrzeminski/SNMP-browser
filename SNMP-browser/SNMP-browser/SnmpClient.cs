@@ -510,35 +510,20 @@ namespace SNMP_browser
                 String received_data = read.ReadLine();
                 Console.WriteLine(received_data);
                 SNMPJsonPacket packet = sendRequest(received_data);
-                //GetRequest(received_data);
-               // Console.WriteLine(packet.value);
-
-                 //write.Write(packet.value);
                 if (packet.value != null)
                 {
-                    write.Write(packet.value.ToString());
-                    Console.WriteLine("wyslano " + packet.value);
+                    try
+                    {
+                        write.WriteLine(packet.value.ToString());
+                        Console.WriteLine("wyslano " + packet.value);
+                    }catch(IOException e)
+                    {
+                        Console.WriteLine(e.Data);
+                    }
                 }
                  
                 
-               /* SNMPQuery querry = new SNMPQuery(received_data);
-                string date = JMessage.Serialize(JMessage.FromValue(querry));
-                JMessage received_object = JMessage.Deserialize(date);
-                if (received_object.Type == typeof(SNMPQuery))
-                {
-                    SNMPQuery received_query = received_object.Value.ToObject<SNMPQuery>();
-                    string data = JMessage.Serialize(JMessage.FromValue(sendRequest(received_query.oid)));
-
-                    Console.WriteLine(data);
-                    writer.Write(data);
-                    break;
-                 
-                }
-            
-                else
-                {
-                    Console.WriteLine("Wrong received message format");
-                }*/
+               
             }
 
             // reader.Close();
