@@ -2,6 +2,7 @@ package com.zst.hp.snmp_android;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
@@ -40,13 +42,16 @@ public class snmp extends Activity {
     ExpandableListView expListView;
     List<String> listFolders;
     HashMap<String, List<String>> listChild;
-    Connection connection = new Connection();
 
     PopupWindow popUpWindow;
     private GestureDetector gestureDetector;
 
+    static boolean connected = false;
+    public static Connection connection;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_snmp);
         // get the listview
@@ -76,30 +81,54 @@ public class snmp extends Activity {
                 LayoutInflater layoutInflater = (LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
                 View popupView = layoutInflater.inflate(R.layout.popup, null);
                 final PopupWindow popupWindow = new PopupWindow(popupView, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+                popupWindow.setBackgroundDrawable(new BitmapDrawable());
+                popupWindow.setOutsideTouchable(true);
 
+                final TextView popupname = (TextView) popupWindow.getContentView().findViewById(R.id.PopupName);
+                final TextView popupvalue = (TextView) popupWindow.getContentView().findViewById(R.id.PopupValue);
                 Button btnOk = (Button)popupView.findViewById(R.id.ok);
+
+                if(connected == true) {
+                    connection.sendMessage(oid);
+                }
+
+                //wartosci tekstowe
+                popupname.setText(name);
+
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                if(connected == true)
+                {
+                    String temp = connection.getReceiveMessage();
+                    popupvalue.setText(temp);
+                }
+                else {
+                    Log.i("I","Not connected");
+                    popupvalue.setText("Not connected");
+                }
+
                 btnOk.setOnClickListener(new Button.OnClickListener(){
 
                     @Override
                     public void onClick(View v) {
-                        connection.sendMessage(oid);
                         popupWindow.dismiss();
                     }});
 
                 popupWindow.showAtLocation(findViewById(R.id.activity_snmp) , Gravity.CENTER, 0, 0);
-                //connection.getInstance();
-                //connection.sendMessage(oid);
-
-                //wartosci tekstowe
-                TextView popupname = (TextView) popupWindow.getContentView().findViewById(R.id.PopupName);
-                popupname.setText(name);
-                TextView popupvalue = (TextView) popupWindow.getContentView().findViewById(R.id.PopupValue);
-                popupvalue.setText(connection.getRecieveMessage()); //tymczasowe poki nie ma wartosci z SNMP
 
                 return false;
             }
         });
 
+    }
+
+    public static void connect(String ip, int port) {
+        connection = new Connection(ip, port);
+        connection.execute();
     }
 
     @Override

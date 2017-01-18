@@ -21,37 +21,23 @@ public class Settings extends Activity {
     public EditText editTextAddress, editTextPort;
     public Button buttonConnect;
     private GestureDetector gestureDetector;
-    public Connection connection;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        send = (EditText) findViewById(R.id.responseEditText);
         editTextAddress = (EditText) findViewById(R.id.editText);
         editTextPort = (EditText) findViewById(R.id.editText2);
         buttonConnect = (Button) findViewById(R.id.button);
-        response = (EditText) findViewById(R.id.responseEditText);
         gestureDetector = new GestureDetector(new SwipeGestureDetector());
     }
 
     public void buttonOnClick(View v)
     {
-        Log.i("AAAA","Wchodze do conection");
-        connection = new Connection(editTextAddress.getText()
-                .toString(), Integer.parseInt(editTextPort
-                .getText().toString()), response);
-       connection.execute();
-
-
-        // Perform action on click
-
-
-    }
-    public void buttonSendClick(View v)
-    {
-        Log.i("AAAA","Wysylam");
-        connection.sendMessage(send.getText().toString());
+        String ip = editTextAddress.getText().toString();
+        int port = Integer.parseInt(editTextPort.getText().toString());
+        snmp.connect(ip,port);
     }
 
     @Override
@@ -91,7 +77,7 @@ public class Settings extends Activity {
                     Settings.this.onRightSwipe();
                 }
             } catch (Exception e) {
-                Log.e("Snmp", "Error on gestures");
+                Log.e("I", "Error on gestures");
             }
             return false;
         }

@@ -40,27 +40,11 @@ public class Connection extends AsyncTask<String, String, String> {
         String dstAddress;
         int dstPort;
         String response = "";
-        EditText textResponse;
-        String oid = "1.3.6.1.2.1.1.1.0";
-        String recieve_message = null;
+        String receive_message = null;
 
-    private static Connection instance = null;
-    protected Connection() {
-        // Exists only to defeat instantiation.
-    }
-    public static Connection getInstance() {
-        if(instance == null) {
-            instance = new Connection();
-        }
-        return instance;
-    }
-
-    Connection(String addr, int port, EditText Response) {
+    Connection(String addr, int port) {
         dstAddress = addr;
         dstPort = port;
-        this.textResponse = Response;
-        Log.i("BBBB","Connection");
-        
         }
 
 @Override
@@ -69,20 +53,21 @@ protected String doInBackground(String... params)
             Socket socket = null;
             try
             {
-                Log.i("BBB", "Proba polaczenia z" + dstAddress + " na " + dstPort);
+                Log.i("I", "Connecting with: " + dstAddress + " on " + dstPort+" ...");
                 socket = new Socket(dstAddress, dstPort);
-                Log.i("BBB", "Poloczono");
+                Log.i("I", "Connected");
+                snmp.connected = true;
+
                 writer = new PrintStream(socket.getOutputStream());
                 br = socket.getInputStream();
-                //sendMessage("hi pc");
 
                 byte[] buffer = new byte[4096];
                 int read = br.read(buffer, 0, 4096); //This is blocking
                 while(read != -1){
                     byte[] tempdata = new byte[read];
                     System.arraycopy(buffer, 0, tempdata, 0, read);
-                    recieve_message = new String(tempdata);
-                    Log.i("AsyncTask", recieve_message);
+                    receive_message = new String(tempdata);
+                    Log.i("I", "Received: "+receive_message);
                     read = br.read(buffer, 0, 4096); //This is blocking
                 }
 
@@ -111,21 +96,23 @@ protected String doInBackground(String... params)
 
     public void sendMessage(String oid)
     {
+        oid+=".0";
         writer.println(oid);
         writer.flush();
-        Log.i("BBB", "wysylanie");
+        Log.i("I", "Sending: "+oid);
     }
-    public String getRecieveMessage()
+    public String getReceiveMessage()
     {
-        return recieve_message;
+        String temp = receive_message;
+        receive_message = null;
+        return temp;
     }
 @Override
 protected void onPostExecute(String result) {
     if (result == null) {
-        Log.e("007", "Something failed!");
+        Log.e("I", "Something failed!");
     } else {
-        Log.d("OO7", "In on post execute");
-        textResponse.setText(result);
+        Log.d("I", "In on post execute");
         super.onPostExecute(result);
     }
 }

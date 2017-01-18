@@ -74,19 +74,7 @@
         android:layout_width="332dp"
         android:layout_height="wrap_content"
         android:id="@+id/button"
+        android:layout_marginTop="19dp"
         android:onClick="buttonOnClick" />
 
-    <EditText
-        android:text=" "
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-        android:id="@+id/responseEditText" />
-
-    <Button
-        android:text="send"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/btnSend"
-        android:onClick="buttonSendClick" />
 </LinearLayout>
