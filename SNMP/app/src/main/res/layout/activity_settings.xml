@@ -82,4 +82,11 @@
         android:layout_height="wrap_content"
 
         android:id="@+id/responseEditText" />
+
+    <Button
+        android:text="send"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnSend"
+        android:onClick="buttonSendClick" />
 </LinearLayout>

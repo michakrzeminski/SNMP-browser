@@ -14,7 +14,7 @@ namespace SNMP_browser
     public class SnmpClient
     {
         // SNMP community name
-        OctetString community = new OctetString("public");
+        OctetString community = new OctetString("community");
         AgentParameters param;
 
         Pdu pdu;
@@ -38,6 +38,9 @@ namespace SNMP_browser
         private TcpListener listener;
         private int proxyPort;
        // private static BinaryWriter writer;
+        private AsynchronousSocketListener proxy;
+
+        public static ManualResetEvent allDone = new ManualResetEvent(false);
 
         public SnmpClient(MainWindow windowHandler)
         {
@@ -72,29 +75,15 @@ namespace SNMP_browser
             IpAddress agent = new IpAddress(address);
             target = new UdpTarget((IPAddress)agent, 161, 2000, 2);
 
-
-            proxyPort = 1235;
-            listener = new TcpListener(IPAddress.Parse(GetLocalIPAddress()), proxyPort);
-            Thread thread = new Thread(new ThreadStart(Listen));
-            thread.Start();
-
-            Console.WriteLine("Start SNMP proxy serwer");
-            Console.WriteLine("IP: " + GetLocalIPAddress() + " Port: "+ proxyPort);
-           // test();
-           // GetRequest("1.3.6.1.2.1.1.1.0");
-           // Console.WriteLine(getOidNumber());
-           // Console.WriteLine(getValue());
-           // Console.WriteLine(getType());
-           // Console.WriteLine(getIpPort());
-
-            // translation = new Dictionary<string, string>();
-            // this.readTranslationFile();
-
-            //varBindListPerTrap = new Dictionary<int, List<VarBind>>();
-            /// Thread trap_thread = new Thread(trapReceiver);
-            // trap_thread.Start();
+            Thread proxy = new Thread(initproxy);
+            proxy.Start();
         }
 
+
+        public void initproxy()
+        {
+            this.proxy = new AsynchronousSocketListener();
+        }
         public void resetTrapCounter()
         {
             trapCounter = 0;
@@ -571,6 +560,20 @@ namespace SNMP_browser
 
 
         }
+
+        public static string getRequestProxy(string content)
+        {
+            string result = "";
+            content = content.Remove(content.Length - 1);
+            SnmpV1Packet packet = Instance.GetRequest(content);
+            return packet.Pdu.VbList[0].Value.ToString();
+        }
+
+        public static SnmpClient Instance
+        {
+            get { return instance; }
+        }
+        private static SnmpClient instance = new SnmpClient();
     }
 
 

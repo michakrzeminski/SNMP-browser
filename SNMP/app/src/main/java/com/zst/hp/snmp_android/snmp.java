@@ -40,8 +40,7 @@ public class snmp extends Activity {
     ExpandableListView expListView;
     List<String> listFolders;
     HashMap<String, List<String>> listChild;
-    Connection connection;
-
+    Connection connection = new Connection();
 
     PopupWindow popUpWindow;
     private GestureDetector gestureDetector;
@@ -71,7 +70,7 @@ public class snmp extends Activity {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v,int groupPosition, int childPosition, long id) {
                 String name = listChild.get(listFolders.get(groupPosition)).get(childPosition);
-                String oid = getResources().getString(getResources().getIdentifier(name,"string",getPackageName()));
+                final String oid = getResources().getString(getResources().getIdentifier(name,"string",getPackageName()));
 
                 //Popup
                 LayoutInflater layoutInflater = (LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -80,8 +79,10 @@ public class snmp extends Activity {
 
                 Button btnOk = (Button)popupView.findViewById(R.id.ok);
                 btnOk.setOnClickListener(new Button.OnClickListener(){
+
                     @Override
                     public void onClick(View v) {
+                        connection.sendMessage(oid);
                         popupWindow.dismiss();
                     }});
 

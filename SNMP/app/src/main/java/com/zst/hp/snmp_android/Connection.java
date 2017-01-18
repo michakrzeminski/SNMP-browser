@@ -8,6 +8,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import android.util.Log;
+import android.widget.Toast;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
@@ -34,13 +36,13 @@ public class Connection extends AsyncTask<String, String, String> {
 
         PrintStream writer;
         InputStreamReader reader;
-        BufferedReader br;
+        InputStream br;
         String dstAddress;
         int dstPort;
         String response = "";
         EditText textResponse;
         String oid = "1.3.6.1.2.1.1.1.0";
-        String recieve_message ="nic";
+        String recieve_message = null;
 
     private static Connection instance = null;
     protected Connection() {
@@ -71,27 +73,32 @@ protected String doInBackground(String... params)
                 socket = new Socket(dstAddress, dstPort);
                 Log.i("BBB", "Poloczono");
                 writer = new PrintStream(socket.getOutputStream());
-                br = new BufferedReader(new InputStreamReader(socket.getInputStream(),"UTF-8"));
-                sendMessage(oid);
-            while(true) {
-                recieve_message =  br.readLine();
-                Log.i("A",recieve_message);
+                br = socket.getInputStream();
+                //sendMessage("hi pc");
 
-            }
-            } catch (UnknownHostException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            response = "UnknownHostException: " + e.toString();
-            } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            response = "IOException: " + e.toString();
-            }finally
+                byte[] buffer = new byte[4096];
+                int read = br.read(buffer, 0, 4096); //This is blocking
+                while(read != -1){
+                    byte[] tempdata = new byte[read];
+                    System.arraycopy(buffer, 0, tempdata, 0, read);
+                    recieve_message = new String(tempdata);
+                    Log.i("AsyncTask", recieve_message);
+                    read = br.read(buffer, 0, 4096); //This is blocking
+                }
+
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                response = "UnknownHostException: " + e.toString();
+            } finally
             {
                 if (socket != null)
                 {
                     try {
-                    socket.close();
+                        writer.flush();
+                        writer.close();
+                        br.close();
+                        socket.close();
                     } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -105,6 +112,7 @@ protected String doInBackground(String... params)
     public void sendMessage(String oid)
     {
         writer.println(oid);
+        writer.flush();
         Log.i("BBB", "wysylanie");
     }
     public String getRecieveMessage()
@@ -113,10 +121,14 @@ protected String doInBackground(String... params)
     }
 @Override
 protected void onPostExecute(String result) {
-        textResponse.setText(response);
+    if (result == null) {
+        Log.e("007", "Something failed!");
+    } else {
+        Log.d("OO7", "In on post execute");
+        textResponse.setText(result);
         super.onPostExecute(result);
-        }
-
+    }
+}
 }
 
 

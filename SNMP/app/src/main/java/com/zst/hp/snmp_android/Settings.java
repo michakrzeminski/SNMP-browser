@@ -12,11 +12,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import static com.zst.hp.snmp_android.R.id.editText;
+
 public class Settings extends Activity {
 
     public EditText response;
-    EditText editTextAddress, editTextPort;
-    Button buttonConnect;
+    public  EditText send;
+    public EditText editTextAddress, editTextPort;
+    public Button buttonConnect;
     private GestureDetector gestureDetector;
     public Connection connection;
     @Override
@@ -24,6 +27,7 @@ public class Settings extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        send = (EditText) findViewById(R.id.responseEditText);
         editTextAddress = (EditText) findViewById(R.id.editText);
         editTextPort = (EditText) findViewById(R.id.editText2);
         buttonConnect = (Button) findViewById(R.id.button);
@@ -43,6 +47,11 @@ public class Settings extends Activity {
         // Perform action on click
 
 
+    }
+    public void buttonSendClick(View v)
+    {
+        Log.i("AAAA","Wysylam");
+        connection.sendMessage(send.getText().toString());
     }
 
     @Override
