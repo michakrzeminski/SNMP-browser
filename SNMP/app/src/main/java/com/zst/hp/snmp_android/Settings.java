@@ -2,15 +2,27 @@ package com.zst.hp.snmp_android;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.AppCompatRadioButton;
+
+import android.content.DialogInterface;
+import android.support.v7.app.AppCompatActivity;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import static com.zst.hp.snmp_android.R.id.editText;
 
@@ -21,6 +33,8 @@ public class Settings extends Activity {
     public EditText editTextAddress, editTextPort;
     public Button buttonConnect;
     private GestureDetector gestureDetector;
+    public static RadioGroup radio_g;
+    public static RadioButton radio_b;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,9 +49,29 @@ public class Settings extends Activity {
 
     public void buttonOnClick(View v)
     {
-        String ip = editTextAddress.getText().toString();
+        String ip;
+        ip = editTextAddress.getText().toString();
         int port = Integer.parseInt(editTextPort.getText().toString());
-        snmp.connect(ip,port);
+        String portID;
+        portID = editTextPort.getText().toString();
+        String temp = ip;
+        Log.e("A",""+portID);
+        if (!portID.equals(""))
+        {
+
+            if (port == 1235 && ip == temp) {
+                snmp.connect(ip, port);
+                showAlert("Nawiązano połączenie z " + ip + " na porcie: " + port, "Połączono!");
+            } else {
+                Log.e("A", "Wprowadzono złe dane");
+                showAlert("Wprowadzono złe dane. Aby się połączyć spróbuj jeszcze raz", "Błąd połączenia!");
+
+            }
+        }
+        else
+        {
+                showAlert("Nie wprowadzono kompletnych danych", "Brak danych!");
+        }
     }
 
     @Override
@@ -83,4 +117,23 @@ public class Settings extends Activity {
         }
     }
 
+    public void showAlert(String message, String title) {
+        final AlertDialog.Builder myAlert = new AlertDialog.Builder(this);
+        myAlert.setMessage(message);
+        myAlert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        myAlert.setTitle(title);
+        myAlert.create();
+        myAlert.show();
+    }
+
+    public void onBackPressed() {
+        super.onBackPressed();
+        int pid = android.os.Process.myPid();
+        android.os.Process.killProcess(pid);
+    }
 }

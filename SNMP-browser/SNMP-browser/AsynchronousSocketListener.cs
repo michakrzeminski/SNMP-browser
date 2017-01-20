@@ -28,7 +28,7 @@ public class AsynchronousSocketListener
         // Data buffer for incoming data.
         byte[] bytes = new Byte[1024];
 
-        IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse("192.168.1.4"), 1235);
+        IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse(SnmpClient.GetLocalIPAddress()), 1235);
 
         // Create a TCP/IP socket.
         Socket listener = new Socket(AddressFamily.InterNetwork,
@@ -46,6 +46,7 @@ public class AsynchronousSocketListener
                 allDone.Reset();
 
                 // Start an asynchronous socket to listen for connections.
+                Console.WriteLine(IPAddress.Parse(SnmpClient.GetLocalIPAddress()));
                 Console.WriteLine("Waiting for a connection...");
                 listener.BeginAccept(
                     new AsyncCallback(AcceptCallback),

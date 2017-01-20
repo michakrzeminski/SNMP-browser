@@ -43,7 +43,7 @@ public class snmp extends Activity {
     List<String> listFolders;
     HashMap<String, List<String>> listChild;
 
-    PopupWindow popUpWindow;
+    public static PopupWindow popUpWindow;
     private GestureDetector gestureDetector;
 
     static boolean connected = false;
@@ -205,6 +205,19 @@ public class snmp extends Activity {
             }
             return false;
         }
+    }
+
+    private static long back_pressed;
+
+    @Override
+    public void onBackPressed() {
+        if (back_pressed + 2000 > System.currentTimeMillis())
+        {
+            super.onBackPressed();
+        }
+        else
+            Toast.makeText(getBaseContext(), "Press once again to exit!", Toast.LENGTH_SHORT).show();
+        back_pressed = System.currentTimeMillis();
     }
 
 }

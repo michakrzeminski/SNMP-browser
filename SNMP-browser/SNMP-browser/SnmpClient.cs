@@ -14,7 +14,7 @@ namespace SNMP_browser
     public class SnmpClient
     {
         // SNMP community name
-        OctetString community = new OctetString("community");
+        OctetString community = new OctetString("public");
         AgentParameters param;
 
         Pdu pdu;
@@ -525,7 +525,7 @@ namespace SNMP_browser
             return packetJson;
         }
 
-        private static string GetLocalIPAddress()
+        public static string GetLocalIPAddress()
         {
             var host = Dns.GetHostEntry(Dns.GetHostName());
             foreach (var ip in host.AddressList)
